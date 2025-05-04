@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .dashboard-container {
+        padding: 40px;
+        color: #fff;
+        background-color: #121826;
+        min-height: 100vh;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .dashboard-heading {
+        font-size: 2rem;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #f0f0f0;
+    }
+
+    .card {
+        background-color: #1e293b;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+    }
+
+    .group-title {
+        font-size: 1.2rem;
+        color: #93c5fd;
+        margin-bottom: 10px;
+    }
+
+    .member-list {
+        padding-left: 20px;
+        margin-top: 10px;
+    }
+
+    .member-list li {
+        margin-bottom: 6px;
+        color: #e0e7ff;
+    }
+
+    .icon {
+        font-size: 1.5rem;
+        color: #60a5fa;
+    }
+</style>
+
+<div class="dashboard-container">
+    <h2 class="dashboard-heading">
+        <i class="ri-folder-open-line icon"></i>
+        My Project Dashboard
+    </h2>
+
+    {% if student_group %}
+        <div class="card">
+            <h4 class="group-title">
+                <i class="ri-team-line icon"></i>
+                Group Number: {{ student_group.student_group_no }}
+            </h4>
+            <p style="margin-bottom: 10px; font-weight: 500;">Group Members:</p>
+            <ul class="member-list">
+                {% for member in group_members %}
+                    <li>{{ member.name }} ({{ member.email }})</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="card" style="text-align: center;">
+            <p>You are not assigned to any group yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

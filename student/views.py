@@ -154,11 +154,6 @@ def abstract_list_view(request):
     }
     return render(request, 'abstract_list.html', context)
 
-
-
-
-
-
 def edit_profile_student(request):
     try:
         # Get user ID from session
@@ -167,75 +162,156 @@ def edit_profile_student(request):
             print('User ID not found in session.')
             return redirect('user_management:login')
 
-        # Retrieve user object from database
+        # Retrieve user object
         user = get_object_or_404(Users, id=user_id)
         print(f'Editing profile for user: {user.id}, {user.name}')
 
         if request.method == 'POST':
-            # Debug the received POST data
             print(f"POST data: {request.POST}")
-            print(f"Files data: {request.FILES}")
+            print(f"FILES data: {request.FILES}")
 
-            # Update user profile fields
-            user.name = request.POST.get('name', user.name)
-            user.email = request.POST.get('email', user.email)
-            user.contact_number = request.POST.get('contact_number', user.contact_number)
+            # Update only provided fields
+            if request.POST.get('name'):
+                user.name = request.POST.get('name')
 
-            # Department via ID
+            if request.POST.get('email'):
+                user.email = request.POST.get('email')
+
+            if request.POST.get('contact_number'):
+                user.contact_number = request.POST.get('contact_number')
+
             department_id = request.POST.get('department_id')
             if department_id:
-                print(department_id)
                 department_obj = Department.objects.filter(department_name=department_id).first()
-                print(department_obj)
                 if department_obj:
                     user.department_id = department_obj
                     print(f"Assigned department: {department_obj.department_name}")
                 else:
-                    print(f"Department with ID {department_id} not found.")
+                    print(f"Department '{department_id}' not found.")
 
-            # Course via ID
             course_id = request.POST.get('course_id')
-            print('course_id', course_id)
             if course_id:
                 course_obj = Course.objects.filter(course_name=course_id).first()
                 if course_obj:
                     user.course_id = course_obj
                     print(f"Assigned course: {course_obj.course_name}")
                 else:
-                    print(f"Course with ID {course_id} not found.")
+                    print(f"Course '{course_id}' not found.")
 
-            # Profile Picture Upload
-            if 'profile_picture' in request.FILES:
-                user.profile_picture = request.FILES['profile_picture']
+            if request.POST.get('student_group_id'):
+                user.student_group_id = request.POST.get('student_group_id')
+
+            # Handle profile picture upload
+            if 'profile_pic' in request.FILES:
+                user.profile_picture = request.FILES['profile_pic']
                 print(f"Profile picture updated: {user.profile_picture.name}")
 
-            # Save the updated user
+            # Save updates
             try:
-                user.full_clean()  # This will validate the user instance
+                user.full_clean()
                 user.save()
                 print(f"User profile updated successfully: {user.id}")
-                return redirect('student:student_dashboard')  # Redirect to student dashboard after successful profile update
+                return redirect('student:student_dashboard')
             except ValidationError as e:
-                print(f"Validation error occurred: {e.messages}")
-                return render(request, 'studentdashboard.html', {  # Show the student dashboard with error messages
+                print(f"Validation error: {e.messages}")
+                return render(request, 'studentdashboard.html', {
                     'guide_details': get_user_details(user),
                     'departments': Department.objects.all(),
                     'courses': Course.objects.all(),
                     'errors': e.messages,
                 })
 
-        # GET request
-        return render(request, 'studentdashboard.html', {  # Show the student dashboard with current user details
+        # On GET, render form with existing user data
+        return render(request, 'studentdashboard.html', {
             'guide_details': get_user_details(user),
             'departments': Department.objects.all(),
             'courses': Course.objects.all()
         })
 
     except Exception as e:
-        print(f"Unexpected error occurred: {str(e)}")
-        return render(request, 'student/studentdashboard.html', {  # Return to student dashboard if an error occurs
+        print(f"Unexpected error: {str(e)}")
+        return render(request, 'student/studentdashboard.html', {
             'error_message': 'An unexpected error occurred. Please try again later.'
         })
+
+
+# def edit_profile_student(request):
+#     try:
+#         # Get user ID from session
+#         user_id = request.session.get('user_id')
+#         if not user_id:
+#             print('User ID not found in session.')
+#             return redirect('user_management:login')
+
+#         # Retrieve user object from database
+#         user = get_object_or_404(Users, id=user_id)
+#         print(f'Editing profile for user: {user.id}, {user.name}')
+
+#         if request.method == 'POST':
+#             # Debug the received POST data
+#             print(f"POST data: {request.POST}")
+#             print(f"Files data: {request.FILES}")
+
+#             # Update user profile fields
+#             user.name = request.POST.get('name', user.name)
+#             user.email = request.POST.get('email', user.email)
+#             user.contact_number = request.POST.get('contact_number', user.contact_number)
+
+#             # Department via ID
+#             department_id = request.POST.get('department_id')
+#             if department_id:
+#                 print(department_id)
+#                 department_obj = Department.objects.filter(department_name=department_id).first()
+#                 print(department_obj)
+#                 if department_obj:
+#                     user.department_id = department_obj
+#                     print(f"Assigned department: {department_obj.department_name}")
+#                 else:
+#                     print(f"Department with ID {department_id} not found.")
+
+#             # Course via ID
+#             course_id = request.POST.get('course_id')
+#             print('course_id', course_id)
+#             if course_id:
+#                 course_obj = Course.objects.filter(course_name=course_id).first()
+#                 if course_obj:
+#                     user.course_id = course_obj
+#                     print(f"Assigned course: {course_obj.course_name}")
+#                 else:
+#                     print(f"Course with ID {course_id} not found.")
+
+#             # Profile Picture Upload
+#             if 'profile_picture' in request.FILES:
+#                 user.profile_picture = request.FILES['profile_picture']
+#                 print(f"Profile picture updated: {user.profile_picture.name}")
+
+#             # Save the updated user
+#             try:
+#                 user.full_clean()  # This will validate the user instance
+#                 user.save()
+#                 print(f"User profile updated successfully: {user.id}")
+#                 return redirect('student:student_dashboard')  # Redirect to student dashboard after successful profile update
+#             except ValidationError as e:
+#                 print(f"Validation error occurred: {e.messages}")
+#                 return render(request, 'studentdashboard.html', {  # Show the student dashboard with error messages
+#                     'guide_details': get_user_details(user),
+#                     'departments': Department.objects.all(),
+#                     'courses': Course.objects.all(),
+#                     'errors': e.messages,
+#                 })
+
+#         # GET request
+#         return render(request, 'studentdashboard.html', {  # Show the student dashboard with current user details
+#             'guide_details': get_user_details(user),
+#             'departments': Department.objects.all(),
+#             'courses': Course.objects.all()
+#         })
+
+#     except Exception as e:
+#         print(f"Unexpected error occurred: {str(e)}")
+#         return render(request, 'student/studentdashboard.html', {  # Return to student dashboard if an error occurs
+#             'error_message': 'An unexpected error occurred. Please try again later.'
+#         })
 
 
 def get_user_details(user):
@@ -301,6 +377,35 @@ def projects_students(request):
         'project_reviews': project_reviews,
     }
     return render(request, 'project_student.html', context)
+
+def project_members(request):
+    user_id = request.session.get('user_id')
+
+    if not user_id:
+        return render(request, 'studentdashboard.html', {'error': 'User not logged in'})
+    user = get_object_or_404(Users, id=user_id)
+    student_group = Student_Groups.objects.filter(user_id=user).first()
+    if not student_group:
+        return render(request, 'project_student.html', {
+            'student_group': None,
+            'group_members': [],
+            'abstract': None,
+            'project_reviews': []
+        })
+    group_users = Student_Groups.objects.filter(student_group_no=student_group.student_group_no)
+    group_members = [group.user_id for group in group_users]
+    abstract = Abstract.objects.filter(group_id=student_group).first()
+    project_reviews = []
+    if abstract:
+        project_reviews = Project_Reviews.objects.filter(abstract_id=abstract)
+    context = {
+        'student_group': student_group,
+        'group_members': group_members,
+        'abstract': abstract,
+        'project_reviews': project_reviews,
+    }
+    return render(request, 'project_members.html', context)
+
 
 # ========================================================================================================
 
@@ -407,7 +512,6 @@ Abstract:
             presentation=data["presentation"],
             total_score=data["total_score"],
             justification=data["justification"],
-            abstract=abstract_text
         )
 
     except Exception as e:
@@ -471,30 +575,30 @@ def submit_project(request):
             print(f"[DEBUG] Evaluation result: {evaluation}")
             
             # Step 3: Store everything in DB
-            print("[DEBUG] Creating Abstract instance in DB...")
-            print("[DEBUG] Extracted Evaluation Values:")
-            print("Originality:", evaluation.get("originality"))
-            print("Clarity:", evaluation.get("clarity"))
-            print("Feasibility:", evaluation.get("feasibility"))
-            print("Relevance:", evaluation.get("relevance"))
-            print("Methodology:", evaluation.get("methodology"))
-            print("Presentation:", evaluation.get("presentation"))
-            print("Total Score:", evaluation.get("total_score"))
-            print("Justification:", evaluation.get("justification"))
+            print("Originality:", evaluation.originality)
+            print("Clarity:", evaluation.clarity)
+            print("Feasibility:", evaluation.feasibility)
+            print("Relevance:", evaluation.relevance)
+            print("Methodology:", evaluation.methodology)
+            print("Presentation:", evaluation.presentation)
+            print("Total Score:", evaluation.total_score)
+            print("Justification:", evaluation.justification)
+
             
             project = Abstract.objects.create(
                 group_id=student_group,
                 abstract_title=project_title,
-                abstract_file_name=project_abstract.name,
-                originality=evaluation.get("originality"),
-                clarity=evaluation.get("clarity"),
-                feasibility=evaluation.get("feasibility"),
-                relevance=evaluation.get("relevance"),
-                methodology=evaluation.get("methodology"),
-                presentation=evaluation.get("presentation"),
-                total_score=evaluation.get("total_score"),
-                justification=evaluation.get("justification"),
+                abstract_file_name=project_abstract.name,  
+                originality=evaluation.originality,
+                clarity=evaluation.clarity,
+                feasibility=evaluation.feasibility,
+                relevance=evaluation.relevance,
+                methodology=evaluation.methodology,
+                presentation=evaluation.presentation,
+                total_score=evaluation.total_score,
+                justification=evaluation.justification,
             )
+
             print("[DEBUG] Abstract saved successfully to DB.")
 
             messages.success(request, 'Project submitted and evaluated successfully!')

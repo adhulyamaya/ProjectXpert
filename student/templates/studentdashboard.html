@@ -366,6 +366,7 @@
             </a>
             <a href="{% url 'student:group_members'%}" class="nav-item" data-section="group-section">
                 <i class="ri-team-line"></i> My Group
+                
             </a>
             <a href="#" class="nav-item" data-section="submission-section">
                 <i class="ri-upload-cloud-line"></i> Abstract Submissions
@@ -490,25 +491,14 @@
         <div id="group-section" class="content-section" style="display: none;">
             <div class="dashboard-card">
                 <h4 class="card-title"><i class="ri-team-line"></i> My Group Members</h4>
-                {% if user.student_groups_set.first %}
-                    <div class="members-grid">
-                        <!-- Example group member - replace with actual data -->
-                        <div class="member-card">
-                            <div class="group-members">
-                                {% for member in group_members %}
-                                    <div class="member-name"> <i class="ri-user-line"></i>{{ member.name }}</div>
-                                {% empty %}
-                                    <div>No group members found.</div>
-                                {% endfor %}
-                            </div>
-                            
-                            
-                            {% comment %} <button class="view-btn" onclick="viewMember({{ member.user_id.id }})">View Profile</button> {% endcomment %}
-                        </div>
-                    </div>
-                {% else %}
-                    <p>You are not assigned to any group yet.</p>
-                {% endif %}
+
+                <div class="project-actions">
+                    <a href="{% url 'student:project_members' %}">
+                        <button style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #dd8a16; color: rgb(34, 33, 33); cursor: pointer;">
+                            <i class="ri-eye-line" style="margin-right: 5px;"></i> View Group Members
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -591,75 +581,74 @@
  
 
         <div id="edit-section" class="content-section" style="background: #252525; border-radius: 10px; padding: 20px; border-left: 4px solid #FFA500; box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4); margin-top: 25px;">
-    <div class="edit-profile-container">
-        <h3 style="color: #FFA500; margin-bottom: 20px;">Edit Profile</h3>
+            <div class="edit-profile-container">
+                <h3 style="color: #FFA500; margin-bottom: 20px;">Edit Profile</h3>
 
-        <!-- Back Button -->
-        <a href="{% url 'guide:guide_dashboard' %}" class="back-btn" style="background: #444; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; margin-bottom: 40px;">Back</a>
+                <!-- Back Button -->
+                <a href="{% url 'guide:guide_dashboard' %}" class="back-btn" style="background: #444; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; margin-bottom: 40px;">Back</a>
 
-        <form method="POST" enctype="multipart/form-data" action="{% url 'student:edit_profile_student' %}">
-            {% csrf_token %}
+                <form method="POST" enctype="multipart/form-data" action="{% url 'student:edit_profile_student' %}">
+                    {% csrf_token %}
 
-            <!-- Profile Picture Upload -->
-            <div class="form-item " style="margin-bottom: 20px; margin-top: 20px;">
-                <label for="profile_pic" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Profile Picture:</label>
-                <input type="file" name="profile_pic" id="profile_pic" accept="image/*" style="width: 100%; padding: 10px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
-            </div>
+                    <!-- Profile Picture Upload -->
+                    <div class="form-item " style="margin-bottom: 20px; margin-top: 20px;">
+                        <label for="profile_pic" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Profile Picture:</label>
+                        <input type="file" name="profile_pic" id="profile_pic" accept="image/*" style="width: 100%; padding: 10px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
+                    </div>
 
-            <!-- Full Name -->
-            <div class="form-item" style="margin-bottom: 20px;">
-                <label for="name" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Full Name:</label>
-                <input type="text" name="name" id="name" value="{{ user.name }}" required style="width: 100%; padding: 12px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
-            </div>
+                    <!-- Full Name -->
+                    <div class="form-item" style="margin-bottom: 20px;">
+                        <label for="name" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Full Name:</label>
+                        <input type="text" name="name" id="name" value="{{ user.name }}"  style="width: 100%; padding: 12px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
+                    </div>
 
-            <!-- Email -->
-            <div class="form-item" style="margin-bottom: 20px;">
-                <label for="email" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Email:</label>
-                <input type="email" name="email" id="email" value="{{ user.email }}" required style="width: 100%; padding: 12px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
-            </div>
+                    <!-- Email -->
+                    <div class="form-item" style="margin-bottom: 20px;">
+                        <label for="email" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Email:</label>
+                        <input type="email" name="email" id="email" value="{{ user.email }}"  style="width: 100%; padding: 12px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
+                    </div>
 
-            <!-- Contact -->
-            <div class="form-item" style="margin-bottom: 20px;">
-                <label for="contact_number" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Contact:</label>
-                <input type="text" name="contact_number" id="contact_number" value="{{ user.contact_number }}" style="width: 100%; padding: 12px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
-            </div>
+                    <!-- Contact -->
+                    <div class="form-item" style="margin-bottom: 20px;">
+                        <label for="contact_number" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Contact:</label>
+                        <input type="text" name="contact_number" id="contact_number" value="{{ user.contact_number }}" style="width: 100%; padding: 12px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
+                    </div>
 
-            <div class="form-row">
-    <!-- Department Selection -->
-    <div class="form-group">
-        <i class="ri-building-line form-icon"></i>
-        <select class="form-control" id="department_id" name="department_id" required 
-                onchange="updateCourses()">
-            <option value="" disabled selected>Select Department</option>
-            <option value="ComputerScience">Computer Science</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Commerce">Commerce</option>
-        </select>
-    </div>
+                    <div class="form-row">
+                    <!-- Department Selection -->
+                    <div class="form-group">
+                        <i class="ri-building-line form-icon"></i>
+                        <select class="form-control" id="department_id" name="department_id"  
+                                onchange="updateCourses()">
+                            <option value="" disabled selected>Select Department</option>
+                            <option value="ComputerScience">Computer Science</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Commerce">Commerce</option>
+                        </select>
+                    </div>
 
-    <!-- Course Selection -->
-    <div class="form-group">
-        <i class="ri-book-line form-icon"></i>
-        <select class="form-control" id="course_id" name="course_id" required>
-            <option value="" disabled selected>Select Course</option>
-        </select>
-    </div>
-</div>
+                    <!-- Course Selection -->
+                    <div class="form-group">
+                        <i class="ri-book-line form-icon"></i>
+                        <select class="form-control" id="course_id" name="course_id" >
+                            <option value="" disabled selected>Select Course</option>
+                        </select>
+                    </div>
+                </div>
 
-<div class="form-group" id="student-group-container">
-    <i class="ri-team-line form-icon"></i>
-    <select class="form-control" id="student_group_id" name="student_group_id">
-        <option value="" disabled selected>Select Student Group</option>
-        {% for i in "1234567890" %}
-        <option value="group_{{ forloop.counter }}">Group {{ forloop.counter }}</option>
-        {% endfor %}
-    </select>
-</div>  
-
-            <!-- Submit Button -->
-            <div class="form-item" style="margin-bottom: 20px;">
-                <button type="submit" class="submit-btn" style="width: 100%; background: #FFA500; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">Save Changes</button>
-            </div>
+                <div class="form-group" id="student-group-container">
+                    <i class="ri-team-line form-icon"></i>
+                    <select class="form-control" id="student_group_id" name="student_group_id">
+                        <option value="" disabled selected>Select Student Group</option>
+                        {% for i in "1234567890" %}
+                        <option value="group_{{ forloop.counter }}">Group {{ forloop.counter }}</option>
+                        {% endfor %}
+                    </select>
+                </div>  
+                <!-- Submit Button -->
+                <div class="form-item" style="margin-bottom: 20px;">
+                    <button type="submit" class="submit-btn" style="width: 100%; background: #FFA500; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">Save Changes</button>
+                </div>
         </form>
     </div>
 </div>
