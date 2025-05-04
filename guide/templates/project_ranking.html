@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+    .dashboard-card {
+        background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+        color: #fff;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        animation: fadeInDown 1s ease-in-out;
+    }
+
+    .project-card {
+        background-color: rgb(46, 44, 44);
+        border-radius: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeInUp 0.8s ease;
+        color: #fff;
+    }
+
+    .project-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 6px 18px rgba(63, 60, 60, 0.2);
+    }
+
+    .card-title {
+        font-weight: 600;
+        font-size: 22px;
+    }
+
+    .form-control, .btn {
+        border-radius: 10px;
+    }
+
+    .btn-primary {
+        background-color: #0f62fe;
+        border-color: #0f62fe;
+    }
+
+    .btn-primary:hover {
+        background-color: #0353e9;
+        border-color: #0353e9;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .icon {
+        font-size: 24px;
+        margin-right: 5px;
+        color: #0f62fe;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .highlight {
+        color: #10b981;
+        font-weight: bold;
+    }
+</style>
+
+<div class="content-section">
+    <div class="dashboard-card">
+        <div class="section-header">
+            <i class="ri-brain-fill icon"></i> AI Project Analysis Dashboard
+        </div>
+        <p class="text-light">Explore project metrics, rankings, and guide feedbacks for student-submitted AI projects.</p>
+
+        {% if abstracts %}
+            {% for abstract in abstracts %}
+                <div class="card project-card mt-4 p-4 col-md-10 mx-auto">
+                    <div class="card-body">
+                        <h4 class="card-title text-white">
+                            <i class="ri-lightbulb-flash-line icon"></i> {{ abstract.abstract_title }}
+                        </h4>
+
+                        <a href="/media/{{ abstract.abstract_file_name }}" target="_blank" class="btn btn-sm btn-outline-info mb-3">
+                            <i class="ri-eye-line"></i> View Abstract (PDF)
+                        </a>
+
+                        <p><i class="ri-code-s-slash-line icon"></i><strong>Project Type:</strong> {{ abstract.project_type }}</p>
+                        <p><i class="ri-information-line icon"></i><strong>Abstract Status:</strong> <span class="highlight">{{ abstract.abstract_status }}</span></p>
+                        <p><i class="ri-bar-chart-2-line icon"></i><strong>Rank:</strong> {{ abstract.rank }}</p>
+                        <p><i class="ri-calendar-line icon"></i><strong>Submitted On:</strong> {{ abstract.created_at|date:"F d, Y" }}</p>
+
+                        {% for review in project_reviews %}
+                            {% if review.abstract_id == abstract %}
+                                <div class="mt-3 p-3 bg-light rounded text-dark">
+                                    <p><i class="ri-calendar-check-line icon"></i><strong>Review Date:</strong> {{ review.review_date }}</p>
+                                    <p><i class="ri-flag-line icon"></i><strong>Project Status:</strong> {{ review.project_status }}</p>
+                                    <p><i class="ri-sticky-note-line icon"></i><strong>Feedback:</strong> {{ review.feedback }}</p>
+                                    <p><i class="ri-profile-line icon"></i><strong>Review Type:</strong> {{ review.review_choices }}</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <form method="POST" action="{% url 'guide:handle_project_action' abstract.id %}" class="mt-4">
+                            {% csrf_token %}
+                            <div class="form-group mb-3">
+                                <label for="action"><i class="ri-settings-3-line icon"></i>Action:</label>
+                                <select id="action" name="action" class="form-control">
+                                    <option value="accept">✅ Accept</option>
+                                    <option value="reject">❌ Reject</option>
+                                    <option value="hold">⏸️ Hold</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="remarks"><i class="ri-edit-2-line icon"></i>Remarks (Optional):</label>
+                                <textarea id="remarks" name="remarks" class="form-control" rows="3" placeholder="Enter remarks..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary"><i class="ri-send-plane-2-fill"></i> Submit</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="card mt-4 col-md-8 mx-auto text-center p-4">
+                <div class="card-body">
+                    <i class="ri-emotion-sad-line" style="font-size: 48px; color: #ff6b6b;"></i>
+                    <p class="mt-2">No AI projects found for your course.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

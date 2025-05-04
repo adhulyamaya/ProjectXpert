@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-start">
+        <a href="{% url 'hod:head_dashboard' %}" class="btn btn-warning mb-3">
+            ← Head Dashboard
+        </a>
+    </div>
+
+    <h3>Students under Guide: {{ guide.name }}</h3>
+
+    {% if data %}
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered table-dark text-light">
+            <thead class="bg-warning text-black">
+                <tr>
+                    <th>Group No</th>
+                    <th>Abstract Title</th>
+                    <th>Status</th>
+                    
+                    <th>Abstract File</th>
+                    <th>Send Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in data %}
+                <tr>
+                    <td>{{ entry.group_no }}</td>
+                    <td>{{ entry.abstract_title }}</td>
+                    <td>{{ entry.abstract_status }}</td>
+                    
+                    <td>
+                        {% if entry.abstract_path %}
+                        
+                        <a href="/media/{{ entry.abstract_path }}" target="_blank" class="btn btn-sm btn-info">View</a>
+                        
+
+
+                        {% else %}
+                        <span class="text-light">No File</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'user_management:send_message' guide.id %}" class="btn btn-sm btn-primary">Send</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info mt-4">No projects found under this guide.</div>
+    {% endif %}
+</div>
+{% endblock %}

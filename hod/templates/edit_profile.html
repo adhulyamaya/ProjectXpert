@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Edit HOD Profile</h3>
+
+    {% if errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" name="name" id="name" class="form-control" value="{{ guide_details.name }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" id="email" class="form-control" value="{{ guide_details.email }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="contact_number" class="form-label">Contact Number</label>
+            <input type="text" name="contact_number" id="contact_number" class="form-control" value="{{ guide_details.contact_number }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="course" class="form-label">Course</label>
+            <input type="text" name="course" id="course" class="form-control" placeholder="Enter course name" value="{{ guide_details.course }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="department" class="form-label">Department</label>
+            <input type="text" name="department" id="department" class="form-control" placeholder="Enter department name" value="{{ guide_details.department }}">
+        </div>
+
+        <button type="submit" class="btn btn-warning">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

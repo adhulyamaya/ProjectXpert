@@ -1,0 +1,758 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .dashboard-container {
+        display: flex;
+        min-height: calc(100vh - 56px); /* Account for navbar */
+        gap: 20px;
+        padding: 20px;
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+        width: 280px;
+        background: #1e1e1e;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        position: sticky;
+        top: 76px; /* Navbar height + padding */
+        height: fit-content;
+    }
+
+    .sidebar-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .sidebar-header img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #FFA500;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-header h4 {
+        color: #FFA500;
+        margin: 5px 0;
+    }
+
+    .sidebar-header p {
+        color: #aaa;
+        font-size: 0.9rem;
+    }
+
+    .nav-menu {
+        margin-top: 20px;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        color: #ddd;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .nav-item i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+        color: #FFA500;
+    }
+
+    .nav-item:hover, .nav-item.active {
+        background: rgba(255, 165, 0, 0.2);
+        color: #FFA500;
+        transform: translateX(5px);
+    }
+
+    .logout-btn {
+        width: 100%;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+        background: #c0392b;
+        transform: translateY(-2px);
+    }
+
+    /* ===== Main Content ===== */
+    .main-content {
+        flex: 1;
+        background: #1e1e1e;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Enhanced Welcome Banner */
+    .welcome-banner {
+        background: linear-gradient(135deg, #FF8C00 0%, #FF4500 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+        position: relative;
+    }
+
+    .welcome-content {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .profile-image-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid white;
+    }
+
+    .welcome-text {
+        flex: 1;
+    }
+
+    .welcome-text h3 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .student-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .detail-item {
+        padding: 8px 0;
+    }
+
+    .detail-label {
+        color: #FFA500;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+
+    .detail-value {
+        color: white;
+        font-size: 1rem;
+    }
+
+    .edit-profile-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .edit-profile-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Edit Form */
+    .edit-form {
+        display: none;
+        margin-top: 20px;
+        background: #252525;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #FFA500;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #FFA500;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        background: #333;
+        border: 1px solid #444;
+        border-radius: 5px;
+        color: white;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    /* Rest of your existing styles */
+    .dashboard-card {
+        background: #252525;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid #FFA500;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(255, 165, 0, 0.2);
+    }
+
+    .card-title {
+        color: #FFA500;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #333;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-item i {
+        color: #FFA500;
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+
+    /* Group Members */
+    .members-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .member-card {
+        background: #252525;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid #333;
+    }
+
+    .member-card:hover {
+        border-color: #FFA500;
+        transform: translateY(-3px);
+    }
+
+    .member-photo {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #FFA500;
+        margin: 0 auto 10px;
+    }
+
+    .member-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .member-role {
+        color: #FFA500;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .view-btn {
+        background: rgba(255, 165, 0, 0.1);
+        color: #FFA500;
+        border: 1px solid #FFA500;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .view-btn:hover {
+        background: #FFA500;
+        color: #121212;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .dashboard-container {
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            width: 100%;
+            position: relative;
+            top: 0;
+        }
+
+        .welcome-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-image-large {
+            margin: 0 auto;
+        }
+
+        .edit-profile-btn {
+            position: static;
+            margin-top: 15px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/dummy-pfp.jpeg' %}{% endif %}" alt="Profile Picture">
+            <h4>{{ guide_details.name }}</h4>
+            <p>Guide</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="#" class="nav-item active" data-section="profile-section">
+                <i class="ri-user-line"></i> My Profile
+            </a>
+
+            <a href="#" class="nav-item" data-section="ai-section">
+                <i class="ri-brain-line"></i> Ai Project Analysis
+            </a>
+
+  
+
+
+            <a href="#" class="nav-item" data-section="group-section">
+                <i class="ri-team-line"></i> Announcements
+            </a>
+            <a href="{% url 'user_management:inbox' %}" class="nav-item" >
+                <i class="ri-upload-cloud-line"></i> Messages
+            </a>
+            <a href="{% url 'guide:edit_profile_guide' %}" class="nav-item" data-section="edit-section">
+                <i class="ri-edit-line"></i> Edit Profile
+            </a>
+        </div>
+        
+        <a href="{% url 'user_management:logout' %}" class="logout-btn">
+            <i class="ri-logout-box-r-line"></i> Logout
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Enhanced Welcome Banner -->
+        <div class="welcome-banner">
+            
+            <div class="welcome-content">
+                <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/dummy-pfp.jpeg' %}{% endif %}" 
+                     alt="Profile Picture" class="profile-image-large">
+                <div class="welcome-text">
+                    <h3>Welcome back, {{ guide_details.name }}!</h3>
+                    <p>Track your projects and academic progress</p>
+                    
+                    <div class="student-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value" id="email-value">{{ guide_details.email|default:"Not provided" }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Contact</div>
+                            <div class="detail-value" id="contact-value">{{ guide_details.contact_number|default:"Not provided" }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Course</div>
+                            <div class="detail-value">{{ guide_details.course }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Department</div>
+                            <div class="detail-value">{{ guide_details.department }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>       
+        <!-- Profile Section (Visible by default) -->
+        <div id="profile-section" class="content-section">
+            <div class="dashboard-card">
+                <h4 class="card-title"><i class="ri-user-line"></i> Personal Information</h4>
+                <div class="info-item">
+                    <i class="ri-id-card-line"></i>
+                    <div>
+                        <strong>Full Name:</strong> {{ guide_details.name }}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="ri-mail-line"></i>
+                    <div>
+                        <strong>Email:</strong> {{ guide_details.email|default:"Not provided" }}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="ri-phone-line"></i>
+                    <div>
+                        <strong>Contact:</strong> {{ guide_details.contact_number|default:"Not provided" }}
+                    </div>
+                </div>
+            </div>
+        
+            <div class="dashboard-card">
+                <h4 class="card-title"><i class="ri-school-line"></i> Academic Information</h4>
+                <div class="info-item">
+                    <i class="ri-book-line"></i>
+                    <div>
+                        <strong>Course:</strong> {{ guide_details.course }}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="ri-building-line"></i>
+                    <div>
+                        <strong>Department:</strong> {{ guide_details.department }}
+                    </div>
+                </div>
+                {% if guide_details.student_group_no %}
+                <div class="info-item">
+                    <i class="ri-group-line"></i>
+                    <div>
+                        <strong>Group Number:</strong> {{ guide_details.student_group_no }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        
+            <!-- Edit Profile Button -->
+            
+        </div>
+        
+
+
+        <!-- Group Section (Hidden by default) -->
+<div id="group-section" class="content-section" style="display: none;">
+    <div class="dashboard-card">
+    
+            
+            <!-- Add New Post Section -->
+            <div class="add-post-form">
+                <h4>Post a Topic</h4>
+                <form method="POST" action="{% url 'guide:submit_topic' %}">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="topic">Topic</label>
+                        <input type="text" id="topic" name="topic" class="form-control" placeholder="Enter topic" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description (Optional)</label>
+                        <textarea id="description" name="description" class="form-control" placeholder="Enter description (optional)" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" name="date" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="submission_type">Submission Type</label>
+                        <select id="submission_type" name="submission_type" class="form-control" required>
+                            <option value="submit_abstract">Submit Abstract</option>
+                            <option value="review_1">Review 1</option>
+                            <option value="review_2">Review 2</option>
+                            <option value="review_3">Review 3</option>
+                            <option value="review_4">Review 4</option>
+                            <option value="review_5">Review 5</option>
+                            <option value="report_submission">Report Submission</option>
+                        </select>
+                    </div>
+
+                    
+                    <button type="submit" class="btn btn-warning">Send</button>
+                </form>
+
+            </div>
+            
+    </div>
+</div>
+
+<!-- Submission Section (Hidden by default) -->
+        <div id="ai-section" class="content-section" style="display: none;">
+    <div class="dashboard-card">
+        <h4 class="card-title"><i class="ri-upload-cloud-line"></i> Welcome to the AI World</h4>
+        <p>This section will display details about your AI project analysis, rankings, and insights.</p>
+
+        <!-- Example content (can be expanded as needed) -->
+        <div class="card">
+            <div class="card-body bg-black text-bg-white">
+                <p>Explore your AI project's progress and rankings here.</p>
+                <a href="{% url 'guide:project_ranking' %}" class="btn btn-warning">Go to Project Rankings</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <!-- Edit Section (Hidden by default) -->
+        <div id="edit-profile-container" class="content-section" style="display: none;">
+            <h3 style="color: #FFA500; margin-bottom: 20px;">Edit Profile</h3>
+        
+            <!-- Back Button -->
+            <a href="{% url 'guide:guide_dashboard' %}" class="back-btn" style="background: #444; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; margin-bottom: 20px;">Back</a>
+        
+            <form method="POST" action="{% url 'guide:edit_profile_guide' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+        
+                <!-- Full Name -->
+                <div class="form-item" style="margin-bottom: 20px;">
+                    <label for="name" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Full Name:</label>
+                    <input type="text" name="name" id="name" value="{{ guide_details.name }}" required style="width: 100%; padding: 12px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
+                </div>
+        
+                <!-- Email -->
+                <div class="form-item" style="margin-bottom: 20px;">
+                    <label for="email" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Email:</label>
+                    <input type="email" name="email" id="email" value="{{ guide_details.email }}" required style="width: 100%; padding: 12px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
+                </div>
+        
+                <!-- Contact -->
+                <div class="form-item" style="margin-bottom: 20px;">
+                    <label for="contact_number" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Contact:</label>
+                    <input type="text" name="contact_number" id="contact_number" value="{{ guide_details.contact_number }}" style="width: 100%; padding: 12px; background: #333; border: 1px solid #444; border-radius: 5px; color: white;">
+                </div>
+        
+                <!-- Department -->
+                <div class="form-item" style="margin-bottom: 20px;">
+                    <label for="department_id" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Department:</label>
+                    <select class="form-control" id="department_id" name="department" required onchange="updateCourses()" style="width: 100%; padding: 12px; background: #333; color: white; border: 1px solid #444; border-radius: 5px;">
+                        <option value="" disabled selected>Select Department</option>
+                        <option value="ComputerScience" {% if guide_details.department == "ComputerScience" %}selected{% endif %}>Computer Science</option>
+                        <option value="Electronics" {% if guide_details.department == "Electronics" %}selected{% endif %}>Electronics</option>
+                        <option value="Commerce" {% if guide_details.department == "Commerce" %}selected{% endif %}>Commerce</option>
+                    </select>
+                </div>
+        
+                <!-- Course -->
+                <div class="form-item" style="margin-bottom: 20px;">
+                    <label for="course_id" style="color: #FFA500; font-size: 1rem; margin-bottom: 5px;">Course:</label>
+                    <select class="form-control" id="course_id" name="course" required style="width: 100%; padding: 12px; background: #333; color: white; border: 1px solid #444; border-radius: 5px;">
+                        <option value="" disabled selected>Select Course</option>
+                        {% if guide_details.course %}
+                            <option value="{{ guide_details.course }}" selected>{{ guide_details.course }}</option>
+                        {% endif %}
+                    </select>
+                </div>
+        
+                <!-- Submit Button -->
+                <div class="form-item" style="margin-bottom: 20px;">
+                    <button type="submit" class="submit-btn" style="width: 100%; background: #FFA500; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">Save Changes</button>
+                </div>
+            </form>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Section switching
+        const navItems = document.querySelectorAll('.nav-item');
+        const contentSections = document.querySelectorAll('.content-section');
+        
+        function showSection(sectionId) {
+            contentSections.forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) {
+                activeSection.style.display = 'block';
+            }
+            
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-section') === sectionId) {
+                    item.classList.add('active');
+                }
+            });
+        }
+        
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sectionId = this.getAttribute('data-section');
+                showSection(sectionId);
+                history.pushState(null, null, `#${sectionId}`);
+            });
+        });
+        
+        // Check URL hash on load
+        const hash = window.location.hash.substring(1);
+        if (hash && document.getElementById(hash)) {
+            showSection(hash);
+        } else {
+            showSection('profile-section');
+        }
+
+        // Edit profile toggle
+        const editBtn = document.getElementById('editProfileBtn');
+        const cancelBtn = document.getElementById('cancelEditBtn');
+        const editForm = document.getElementById('editProfileForm');
+        const welcomeContent = document.querySelector('.welcome-content');
+
+        editBtn.addEventListener('click', function() {
+            welcomeContent.style.display = 'none';
+            editForm.style.display = 'block';
+        });
+
+        cancelBtn.addEventListener('click', function() {
+            welcomeContent.style.display = 'flex';
+            editForm.style.display = 'none';
+        });
+
+        // Handle form submission
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update displayed values
+                    document.getElementById('email-value').textContent = data.email || 'Not provided';
+                    document.getElementById('contact-value').textContent = data.contact_number || 'Not provided';
+                    
+                    // Update sidebar name if changed
+                    if (data.name) {
+                        document.querySelector('.sidebar-header h4').textContent = data.name;
+                        document.querySelector('.welcome-text h3').textContent = `Welcome back, ${data.name}!`;
+                    }
+                    
+                    // Update profile picture if changed
+                    if (data.profile_picture_url) {
+                        document.querySelector('.profile-image-large').src = data.profile_picture_url;
+                        document.querySelector('.sidebar-header img').src = data.profile_picture_url;
+                    }
+                    
+                    // Switch back to view mode
+                    welcomeContent.style.display = 'flex';
+                    editForm.style.display = 'none';
+                    
+                    // Show success message
+                    alert('Profile updated successfully!');
+                } else {
+                    alert('Error updating profile: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating your profile');
+            });
+        });
+    });
+    
+    function viewMember(memberId) {
+        // Your existing member view function
+    }
+
+
+    function updateCourses() {
+        const department = document.getElementById("department_id").value;
+        const courseSelect = document.getElementById("course_id");
+
+        // Clear existing options
+        courseSelect.innerHTML = "<option value='' disabled selected>Select Course</option>";
+
+        // Define courses based on department
+        const courses = {
+            ComputerScience: ["BCA", "BSc Computer Science", "MSc Computer Science"],
+            Electronics: ["BSc Electronics", "MSc Electronics"],
+            Commerce: ["BCom", "BCom with Tax", "BBA"]
+        };
+
+        // Add new options
+        if (courses[department]) {
+            courses[department].forEach(course => {
+                const option = document.createElement("option");
+                option.value = course;
+                option.text = course;
+                courseSelect.appendChild(option);
+            });
+        }
+    }
+
+    // Auto-update courses if department is already selected
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById("department_id").value) {
+            updateCourses();
+        }
+    });
+
+    const aiLink = document.querySelector('[data-section="ai-section"]');
+    const aiSection = document.getElementById('ai-section');
+
+    aiLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default anchor click behavior
+        // Toggle the display of the AI section
+        if (aiSection.style.display === 'none') {
+            aiSection.style.display = 'block';
+        } else {
+            aiSection.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

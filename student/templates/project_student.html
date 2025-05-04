@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding: 40px; color: #fff; background-color: #1e1e2f; min-height: 100vh;">
+    <h2 style="margin-bottom: 30px;">
+        <i class="ri-folder-open-line" style="margin-right: 10px;"></i>
+        My Project Dashboard
+    </h2>
+
+    {% if student_group %}
+        <div style="margin-bottom: 20px; background-color: #2c2c3e; padding: 20px; border-radius: 10px;">
+            <h4><i class="ri-team-line"></i> Group Number: {{ student_group.student_group_no }}</h4>
+            <p><strong>Group Members:</strong></p>
+            <ul>
+                {% for member in group_members %}
+                    <li>{{ member.name }} ({{ member.email }})</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {% if abstract %}
+        <div style="margin-bottom: 20px; background-color: #2c2c3e; padding: 20px; border-radius: 10px;">
+            <h4><i class="ri-file-list-3-line"></i> Abstract Details</h4>
+            <p><strong>Title:</strong> {{ abstract.abstract_title }}</p>
+            <p><strong>Status:</strong> {{ abstract.abstract_status }}</p>
+            <p><strong>Rank:</strong> {{ abstract.rank }}</p>
+            <p><strong>Guide Message:</strong> {{ abstract.guide_message }}</p>
+            <p>
+                <strong>Abstract File:</strong>
+                <a href="/media/{{ abstract.abstract_file_name }}" target="_blank" style="color: #4fc3f7;">
+                    <i class="ri-download-2-line"></i> Download
+                </a>
+            </p>
+        </div>
+    {% else %}
+        <p style="color: #ccc;">No abstract submitted yet.</p>
+    {% endif %}
+
+    {% if project_reviews %}
+        <div style="background-color: #2c2c3e; padding: 20px; border-radius: 10px;">
+            <h4><i class="ri-chat-check-line"></i> Project Reviews</h4>
+            {% for review in project_reviews %}
+                <div style="border: 1px solid #444; padding: 10px; margin-top: 10px; border-radius: 8px;">
+                    <p><strong>Date:</strong> {{ review.review_date }}</p>
+                    <p><strong>Status:</strong> {{ review.project_status }}</p>
+                    <p><strong>Feedback:</strong> {{ review.feedback }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: #ccc;">No reviews available.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .contact-section {
+        background-color: #121212;
+        padding: 80px 0;
+        color: #ddd;
+    }
+    
+    .contact-card {
+        background: #1e1e1e;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        padding: 40px;
+        margin-bottom: 30px;
+        border: 1px solid #333;
+    }
+    
+    .contact-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    
+    .contact-header h1 {
+        color: #FFA500;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .contact-header p {
+        color: #aaa;
+        font-size: 1.1rem;
+    }
+    
+    .contact-info {
+        margin-bottom: 30px;
+    }
+    
+    .contact-info-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 25px;
+    }
+    
+    .contact-icon {
+        background: #FFA500;
+        color: #121212;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        font-size: 1.2rem;
+    }
+    
+    .contact-form input,
+    .contact-form textarea {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        background-color: #252525;
+        color: #ddd;
+    }
+    
+    .contact-form textarea {
+        height: 150px;
+    }
+    
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder {
+        color: #777;
+    }
+    
+    .submit-btn {
+        background: #FFA500;
+        color: #121212;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 5px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .submit-btn:hover {
+        background: #e59400;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 165, 0, 0.3);
+    }
+    
+    .map-container {
+        height: 400px;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 30px;
+        border: 1px solid #333;
+    }
+    
+    h2, h5 {
+        color: #FFA500;
+    }
+    
+    .social-links a {
+        color: #FFA500 !important;
+        margin-right: 15px;
+        font-size: 1.5rem;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+    
+    .social-links a:hover {
+        color: #ff8c00 !important;
+        transform: translateY(-3px);
+    }
+</style>
+
+<div class="contact-section">
+    <div class="container">
+        <div class="contact-header">
+            <h1>Contact Us</h1>
+            <p>We'd love to hear from you! Reach out with any questions or feedback.</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="contact-card">
+                    <h2 class="mb-4">Get In Touch</h2>
+                    
+                    <div class="contact-info">
+                        <!-- Contact Information Item 1 -->
+                        <div class="contact-info-item">
+                            <div class="contact-icon">
+                                <i class="ri-map-pin-line"></i>
+                            </div>
+                            <div>
+                                <h5>Address</h5>
+                                <p>College of Applied Science, Mavelikkara</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Contact Information Item 2 -->
+                        <div class="contact-info-item">
+                            <div class="contact-icon">
+                                <i class="ri-mail-line"></i>
+                            </div>
+                            <div>
+                                <h5>Email</h5>
+                                <p>contact@projectxpert.edu</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Contact Information Item 3 -->
+                        <div class="contact-info-item">
+                            <div class="contact-icon">
+                                <i class="ri-phone-line"></i>
+                            </div>
+                            <div>
+                                <h5>Phone</h5>
+                                <p>+1 (123) 456-7890</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="social-links">
+                        <h5 class="mb-3">Follow Us</h5>
+                        <a href="#"><i class="ri-facebook-fill"></i></a>
+                        <a href="#"><i class="ri-twitter-fill"></i></a>
+                        <a href="#"><i class="ri-linkedin-fill"></i></a>
+                        <a href="#"><i class="ri-instagram-fill"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="contact-card">
+                    <h2 class="mb-4">Send Us a Message</h2>
+                    
+                    <form class="contact-form" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="subject" placeholder="Subject">
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <i class="ri-send-plane-fill"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Map Section -->
+        <div class="map-container">
+            <!-- Replace with your actual Google Maps embed code -->
+            <iframe src="https://www.google.com/maps/place/College+of+Applied+Sciences,+IHRD/@9.2463123,76.5322488,17z/data=!4m14!1m7!3m6!1s0x3b061f264d4c5421:0x868ffdeecb8bfea2!2sCollege+of+Applied+Sciences,+IHRD!8m2!3d9.2463123!4d76.5348237!16s%2Fg%2F1tz74dj2!3m5!1s0x3b061f264d4c5421:0x868ffdeecb8bfea2!8m2!3d9.2463123!4d76.5348237!16s%2Fg%2F1tz74dj2?entry=ttu&g_ep=EgoyMDI1MDQwMS4wIKXMDSoJLDEwMjExNDU1SAFQAw%3D%3D" 
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

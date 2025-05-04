@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="container mt-3">
+        <div class="d-flex justify-content-start">
+            <a href="{% url 'hod:head_dashboard' %}" class="btn btn-warning mb-3">
+                ← Head Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <h3 class="mb-4">Guide Details</h3>
+    <div class="row">
+        {% for guide in guide_users %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body bg-warning">
+                    <h5 class="card-title">{{ guide.name }}</h5>
+                    <p class="card-text">Email: {{ guide.email }}</p>
+                    <a href="{% url 'hod:view_projects' guide.id %}" class="btn btn-dark">View Projects</a>
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

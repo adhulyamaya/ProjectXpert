@@ -1,0 +1,623 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  /* Global Section Styles */
+  section {
+    min-height: 100vh;
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .section-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .section-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: var(--primary-a30);
+    position: relative;
+    display: inline-block;
+  }
+  
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--primary-a30);
+    border-radius: 2px;
+  }
+  
+  .section-text {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+  }
+  
+  /* Home Section */
+  #home {
+    background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.7)), 
+                url('{% static "images/bg3.jpeg" %}') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+  }
+  
+  .home-content {
+    max-width: 800px;
+    width: 90%; /* Added for better responsiveness */
+    margin: 0 auto; /* Ensures horizontal centering */
+    padding: 40px;
+    background: rgba(30, 30, 30, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  }
+
+  .home-heading {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+  }
+  
+  .home-text {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  /* About Section */
+  #about {
+    background: var(--surface-a0);
+    padding: 100px 0;
+  }
+  
+  .about-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 40px;
+  }
+  
+  .about-image {
+    flex: 1 1 45%;
+    min-width: 300px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  }
+  
+  .about-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  .about-image:hover img {
+    transform: scale(1.05);
+  }
+  
+  .about-content {
+    flex: 1 1 45%;
+    min-width: 300px;
+  }
+  
+  .about-highlight {
+    color: var(--primary-a30);
+    font-weight: 600;
+  }
+  
+  /* Features Section */
+  #features {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+  }
+  
+  .features-container {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    align-items: center;
+    gap: 40px;
+  }
+  
+  .features-list {
+    flex: 1 1 45%;
+    min-width: 300px;
+  }
+  
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(40, 40, 40, 0.7);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+  }
+  
+  .feature-item:hover {
+    background: rgba(50, 50, 50, 0.8);
+    border-left: 4px solid var(--primary-a30);
+    transform: translateX(5px);
+  }
+  
+  .feature-icon {
+    font-size: 1.5rem;
+    color: var(--primary-a30);
+    margin-right: 15px;
+    min-width: 30px;
+  }
+  
+  .feature-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: white;
+  }
+  
+  .feature-description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .features-image {
+    flex: 1 1 45%;
+    min-width: 300px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  }
+  
+  .features-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  /* Testimonials Section */
+  #testimonials {
+    background: linear-gradient(rgba(20, 20, 20, 0.95), rgba(30, 30, 30, 0.95));
+  }
+  
+  .testimonials-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+  }
+  
+  .testimonial-card {
+    background: rgba(40, 40, 40, 0.7);
+    padding: 30px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .testimonial-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--primary-a30);
+  }
+  
+  .testimonial-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .testimonial-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 20px;
+    display: block;
+    border: 3px solid var(--primary-a30);
+  }
+  
+  .testimonial-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 5px;
+    color: white;
+  }
+  
+  .testimonial-role {
+    font-size: 0.9rem;
+    text-align: center;
+    color: var(--primary-a30);
+    margin-bottom: 20px;
+    display: block;
+  }
+  
+  .testimonial-text {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    position: relative;
+  }
+  
+  .testimonial-text::before,
+  .testimonial-text::after {
+    content: '"';
+    font-size: 2rem;
+    color: var(--primary-a30);
+    opacity: 0.3;
+    position: absolute;
+  }
+  
+  .testimonial-text::before {
+    top: -20px;
+    left: -10px;
+  }
+  
+  .testimonial-text::after {
+    bottom: -30px;
+    right: -10px;
+  }
+  
+  /* FAQ Section */
+  #faq {
+    background: linear-gradient(rgba(15, 15, 15, 0.95), rgba(25, 25, 25, 0.95));
+  }
+  
+  .faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .accordion-item {
+    background: rgba(40, 40, 40, 0.7);
+    border: none;
+    border-radius: 8px !important;
+    margin-bottom: 15px;
+    overflow: hidden;
+  }
+  
+  .accordion-button {
+    background: rgba(50, 50, 50, 0.7) !important;
+    color: white !important;
+    font-weight: 600;
+    padding: 20px;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .accordion-button:not(.collapsed) {
+    background: rgba(60, 60, 60, 0.8) !important;
+    color: var(--primary-a30) !important;
+  }
+  
+  .accordion-button::after {
+    filter: brightness(0) invert(1);
+  }
+  
+  .accordion-button:not(.collapsed)::after {
+    filter: brightness(0) invert(0.8) sepia(1) saturate(5) hue-rotate(10deg);
+  }
+  
+  .accordion-body {
+    background: rgba(35, 35, 35, 0.7);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+  }
+  
+  /* Buttons */
+  .btn-primary {
+    background: var(--primary-a30);
+    color: #121212;
+    border: none;
+    padding: 12px 30px;
+    font-weight: 600;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  
+  .btn-primary:hover {
+    background: var(--primary-a50);
+    color: #121212;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+  }
+  
+  .btn-secondary {
+    background: transparent;
+    color: var(--primary-a30);
+    border: 2px solid var(--primary-a30);
+    padding: 10px 25px;
+    font-weight: 600;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-secondary:hover {
+    background: var(--primary-a30);
+    color: #121212;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .about-container,
+    .features-container {
+      flex-direction: column;
+    }
+    
+    .about-image,
+    .about-content,
+    .features-list,
+    .features-image {
+      flex: 1 1 100%;
+      min-width: 100%;
+    }
+    
+    .features-container {
+      flex-wrap: wrap;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    section {
+      padding: 60px 0;
+    }
+    
+    .home-content {
+      padding: 30px 20px;
+    }
+    
+    .feature-item {
+      padding: 15px;
+    }
+    
+    .testimonials-container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<!-- Home Section -->
+<section id="home">
+  <div class="section-container">
+    <div class="home-content">
+      <h1 class="home-heading">Revolutionizing Project Management in Education</h1>
+      <p class="home-text">
+        Struggling with project submissions and approvals? ProjectXpert ranks abstracts with AI, 
+        making selection easy for teachers and feedback instant for students. Save time, stay organized, 
+        and simplify the process!
+      </p>
+      <a href="{% url 'user_management:login' %}" class="btn btn-primary">
+        Get Started
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section id="about">
+  <div class="section-container">
+    <h2 class="section-title">About ProjectXpert</h2>
+    
+    <div class="about-container">
+      <div class="about-image">
+        <img src='{% static "images/bg2.jpeg" %}' alt="About ProjectXpert">
+      </div>
+      
+      <div class="about-content">
+        <p class="section-text">
+          Are you tired of the endless paperwork and time-consuming project approvals? <span class="about-highlight">ProjectXpert</span> revolutionizes the way students submit project abstracts and how teachers evaluate them. Using AI-powered ranking, we streamline the selection process, ensuring the best projects get noticed quickly while reducing the burden on faculty.
+        </p>
+        <p class="section-text">
+          With real-time feedback, automated approvals, and transparency at every stage, <span class="about-highlight">ProjectXpert</span> enhances collaboration between students, mentors, and college administrators. Say goodbye to inefficiency—embrace a smarter way to manage academic projects.
+        </p>
+        <a href="{% url 'user_management:login' %}" class="btn btn-secondary">
+          Learn More
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section id="features">
+  <div class="section-container">
+    <h2 class="section-title">Key Features</h2>
+    
+    <div class="features-container">
+      <div class="features-list">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="ri-ai-generate"></i>
+          </div>
+          <div>
+            <h3 class="feature-title">AI-Powered Abstract Evaluation</h3>
+            <p class="feature-description">Our advanced AI analyzes project abstracts for quality, relevance, and innovation, providing instant rankings to streamline the selection process.</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="ri-feedback-line"></i>
+          </div>
+          <div>
+            <h3 class="feature-title">Real-time Feedback System</h3>
+            <p class="feature-description">Students receive immediate constructive feedback on their submissions, helping them improve their projects before final submission.</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="ri-shield-user-line"></i>
+          </div>
+          <div>
+            <h3 class="feature-title">Role-Based Access Control</h3>
+            <p class="feature-description">Secure platform with differentiated access for students, faculty, and administrators, ensuring data privacy and proper workflow.</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="ri-line-chart-line"></i>
+          </div>
+          <div>
+            <h3 class="feature-title">Project Progress Tracking</h3>
+            <p class="feature-description">Monitor project development stages from abstract submission to final approval, with notifications for important milestones.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="features-image">
+        <img src="{% static 'images/bg3.jpeg' %}" alt="ProjectXpert Features">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials">
+  <div class="section-container">
+    <h2 class="section-title">What Our Users Say</h2>
+    
+    <div class="testimonials-container">
+      <!-- Testimonial 1 -->
+      <div class="testimonial-card">
+        <img src="{% static 'images/user1.webp' %}" alt="Emily Carter" class="testimonial-img">
+        <h3 class="testimonial-name">Emily Carter</h3>
+        <span class="testimonial-role">Computer Science Student</span>
+        <p class="testimonial-text">ProjectXpert made project submissions effortless. The AI feedback helped me improve my abstract significantly before final submission, saving me from potential rejection.</p>
+      </div>
+      
+      <!-- Testimonial 2 -->
+      <div class="testimonial-card">
+        <img src="{% static 'images/user2.webp' %}" alt="Dr. Mark Robinson" class="testimonial-img">
+        <h3 class="testimonial-name">Dr. Mark Robinson</h3>
+        <span class="testimonial-role">Professor & Evaluator</span>
+        <p class="testimonial-text">The automated ranking system saves me hours of evaluation time each semester. I can now focus on mentoring students rather than administrative tasks.</p>
+      </div>
+      
+      <!-- Testimonial 3 -->
+      <div class="testimonial-card">
+        <img src="{% static 'images/user3.webp' %}" alt="Sophia Lee" class="testimonial-img">
+        <h3 class="testimonial-name">Sophia Lee</h3>
+        <span class="testimonial-role">Final Year Student</span>
+        <p class="testimonial-text">ProjectXpert transformed our entire project workflow. No more confusion about deadlines or requirements. The transparency helped our team stay on track throughout the semester.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq">
+  <div class="section-container">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <p class="section-text text-center mb-5">
+      Find answers to common questions about ProjectXpert. If you need further assistance, our support team is always ready to help.
+    </p>
+    
+    <div class="faq-container">
+      <div class="accordion" id="faqAccordion">
+        <!-- Question 1 -->
+        <div class="accordion-item">
+          <h3 class="accordion-header" id="headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+              What is ProjectXpert and how does it work?
+            </button>
+          </h3>
+          <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              ProjectXpert is an AI-powered platform designed to streamline the project management process in educational institutions. It provides students with a structured way to submit project abstracts, offers faculty AI-assisted evaluation tools, and gives administrators oversight of the entire process. The system uses natural language processing to analyze and rank project abstracts based on predefined criteria.
+            </div>
+          </div>
+        </div>
+        
+        <!-- Question 2 -->
+        <div class="accordion-item">
+          <h3 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Who can use ProjectXpert?
+            </button>
+          </h3>
+          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              ProjectXpert is designed for three main user groups: Students can submit projects and receive feedback; Faculty members can evaluate and approve projects with AI assistance; Administrators can monitor the entire process and generate reports. The platform is ideal for colleges, universities, and other educational institutions that manage student projects.
+            </div>
+          </div>
+        </div>
+        
+        <!-- Question 3 -->
+        <div class="accordion-item">
+          <h3 class="accordion-header" id="headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              How does the AI-powered ranking system work?
+            </button>
+          </h3>
+          <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Our AI analyzes project abstracts based on multiple criteria including clarity, innovation, feasibility, relevance to discipline, and proper formatting. The system compares submissions against successful projects from previous years and disciplinary benchmarks. Faculty can adjust the weighting of these criteria based on their specific requirements.
+            </div>
+          </div>
+        </div>
+        
+        <!-- Question 4 -->
+        <div class="accordion-item">
+          <h3 class="accordion-header" id="headingFour">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+              Can faculty provide feedback on submitted abstracts?
+            </button>
+          </h3>
+          <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Absolutely! Faculty can provide both general comments and specific feedback on different sections of the abstract. The system includes templates for common feedback points to save time. Students receive notifications when feedback is available and can resubmit improved versions based on the suggestions.
+            </div>
+          </div>
+        </div>
+        
+        <!-- Question 5 -->
+        <div class="accordion-item">
+          <h3 class="accordion-header" id="headingFive">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+              Is ProjectXpert secure?
+            </button>
+          </h3>
+          <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Security is our top priority. ProjectXpert uses enterprise-grade encryption for all data, both in transit and at rest. We implement role-based access controls, regular security audits, and comply with major data protection regulations. Your institutional data and student work are protected with the highest security standards.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

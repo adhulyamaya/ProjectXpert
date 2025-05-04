@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .services-section {
+        background-color: #121212;
+        padding: 80px 0;
+        color: #ddd;
+    }
+    
+    .section-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+    
+    .section-header h1 {
+        color: #FFA500;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .section-header p {
+        color: #aaa;
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+    
+    .service-card {
+        background: #1e1e1e;
+        border-radius: 10px;
+        padding: 30px;
+        border: 1px solid #333;
+        transition: all 0.3s ease;
+    }
+    
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(255, 165, 0, 0.1);
+        border-color: #FFA500;
+    }
+    
+    .service-icon {
+        font-size: 2.5rem;
+        color: #FFA500;
+        margin-bottom: 20px;
+    }
+    
+    .service-title {
+        color: #FFA500;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    
+    .service-desc {
+        color: #aaa;
+        margin-bottom: 20px;
+    }
+    
+    .learn-more {
+        color: #FFA500;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.3s;
+    }
+    
+    .learn-more:hover {
+        color: #ff8c00;
+        transform: translateX(5px);
+    }
+    
+    .learn-more i {
+        margin-left: 5px;
+        transition: all 0.3s;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, #FF8C00 0%, #FF4500 100%);
+        padding: 60px 0;
+        margin-top: 80px;
+        text-align: center;
+        border-radius: 10px;
+    }
+    
+    .cta-content {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .cta-btn {
+        background: #121212;
+        color: #FFA500;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 5px;
+        font-weight: 600;
+        margin-top: 20px;
+        transition: all 0.3s;
+    }
+    
+    .cta-btn:hover {
+        background: #000;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+</style>
+
+<div class="services-section">
+    <div class="container">
+        <div class="section-header">
+            <h1>Our Services</h1>
+            <p>Discover how ProjXpert can revolutionize your academic project management experience with our comprehensive suite of tools and features.</p>
+        </div>
+        
+        <div class="services-grid">
+            <!-- Service 1 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="ri-ai-generate"></i>
+                </div>
+                <h3 class="service-title">AI-Powered Project Evaluation</h3>
+                <p class="service-desc">
+                    Our advanced AI analyzes project abstracts for quality, relevance and innovation, providing instant rankings to streamline the selection process.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn more <i class="ri-arrow-right-line"></i>
+                </a>
+            </div>
+            
+            <!-- Service 2 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="ri-feedback-line"></i>
+                </div>
+                <h3 class="service-title">Real-Time Feedback System</h3>
+                <p class="service-desc">
+                    Students receive immediate constructive feedback on submissions, helping them improve projects before final submission deadlines.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn more <i class="ri-arrow-right-line"></i>
+                </a>
+            </div>
+            
+            <!-- Service 3 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="ri-shield-user-line"></i>
+                </div>
+                <h3 class="service-title">Role-Based Access Control</h3>
+                <p class="service-desc">
+                    Secure platform with differentiated access for students, faculty and administrators, ensuring data privacy and proper workflow.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn more <i class="ri-arrow-right-line"></i>
+                </a>
+            </div>
+            
+            <!-- Service 4 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="ri-line-chart-line"></i>
+                </div>
+                <h3 class="service-title">Project Progress Tracking</h3>
+                <p class="service-desc">
+                    Monitor project development stages from abstract submission to final approval, with notifications for important milestones.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn more <i class="ri-arrow-right-line"></i>
+                </a>
+            </div>
+            
+            <!-- Service 5 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="ri-cloud-line"></i>
+                </div>
+                <h3 class="service-title">Cloud-Based Collaboration</h3>
+                <p class="service-desc">
+                    Secure cloud storage for all project materials with real-time collaboration tools for students and advisors.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn more <i class="ri-arrow-right-line"></i>
+                </a>
+            </div>
+            
+            <!-- Service 6 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="ri-dashboard-line"></i>
+                </div>
+                <h3 class="service-title">Comprehensive Dashboards</h3>
+                <p class="service-desc">
+                    Customizable dashboards for all user roles, providing at-a-glance insights into project status and institutional metrics.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn more <i class="ri-arrow-right-line"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <div class="cta-content">
+                <h2>Ready to Transform Your Project Management?</h2>
+                <p>Join hundreds of educational institutions already benefiting from ProjXpert's innovative platform.</p>
+                <a href="{% url 'user_management:contact_us' %}" class="cta-btn">
+                    Get Started Today
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

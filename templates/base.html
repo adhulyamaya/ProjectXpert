@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <title>ProjectXpert</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <!-- Remix Icon CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Jomolhari&display=swap" rel="stylesheet">
+
+    <style>
+        /* Updated Global CSS Variables */
+        :root {
+            --bg-color: #121212;
+            --surface-a0: #121212;
+            --surface-a10: #1e1e1e;
+            --surface-a20: #2d2d2d;
+            --primary-a30: #ffbb33;
+            --primary-a50: #ffcc66;
+            --text-primary: rgba(255, 255, 255, 0.9);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --border-radius: 8px;
+        }
+
+        /* Body Styling */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #121212;
+            color: #ddd;
+            font-family: 'Poppins', sans-serif;
+            padding-top: 56px; /* Added for fixed navbar */
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: rgba(30, 30, 30, 0.98);
+            padding: 15px 0;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .brand-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+            margin: 0 12px;
+            padding: 8px 12px !important;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, 
+        .nav-link.active {
+            color: var(--primary-a30);
+            background: rgba(255, 187, 51, 0.1);
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 8px;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 2px var(--primary-a30);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+
+        /* Main Content Area */
+        .container-fluid {
+            flex: 1;
+            padding-top: 20px; /* Reduced since body has padding-top */
+            padding-bottom: 60px;
+        }
+
+        /* Footer Styling */
+        footer {
+            background: var(--surface-a10);
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* ... (rest of your existing CSS remains the same) ... */
+    </style>
+</head>
+<body>
+    <!-- Fixed Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <!-- Brand with Logo -->
+            <a class="navbar-brand" href="/">
+                <img src="{% static 'images/logo.png' %}" alt="ProjXpert Logo" class="brand-logo">
+                ProjectXpert
+            </a>
+
+            <!-- Mobile Toggle Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" 
+                    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar Links -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">
+                            <i class="ri-home-4-line me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_management:services' %}">
+                            <i class="ri-service-line me-1"></i> Services
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_management:contact_us' %}">
+                            <i class="ri-contacts-line me-1"></i> Contact
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ri-settings-line me-1"></i> Admin
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="adminDropdown">
+                            <li><a class="dropdown-item" href="/admin">Admin Panel</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="container-fluid">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-5 pb-3">
+        <div class="container">
+            <!-- First Row with 4 Columns -->
+            <div class="row g-4 mb-4">
+                <!-- Column 1: About -->
+                <div class="col-md-3">
+                    <div class="footer-logo d-flex align-items-center mb-3">
+                        <img src="{% static 'images/logo.png' %}" alt="ProjXpert Logo" class="me-2" style="height: 40px;">
+                        <span class="footer-logo-text h5 mb-0">ProjectXpert</span>
+                    </div>
+                    <p class="footer-about text-muted">
+                        Revolutionizing academic project management with AI-powered solutions for students, faculty, and administrators.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="text-white me-2" style="text-decoration: none;"><i class="ri-facebook-fill"></i></a>
+                        <a href="#" class="text-white me-2" style="text-decoration: none;"><i class="ri-twitter-fill"></i></a>
+                        <a href="#" class="text-white me-2" style="text-decoration: none;"><i class="ri-linkedin-fill"></i></a>
+                        <a href="#" class="text-white" style="text-decoration: none;"><i class="ri-instagram-fill"></i></a>
+                    </div>
+                </div>
+    
+                <!-- Column 2: Quick Links -->
+                <div class="col-md-3">
+                    <h3 class="h5 mb-3" style="color: #FFA500;">Quick Links</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/" class="text-white" style="text-decoration: none;"><i class="ri-arrow-right-s-line me-1"></i> Home</a></li>
+                        <li class="mb-2"><a href="{% url 'user_management:services' %}" class="text-white" style="text-decoration: none;"><i class="ri-arrow-right-s-line me-1"></i> Services</a></li>
+                        <li class="mb-2"><a href="{% url 'user_management:contact_us' %}" class="text-white" style="text-decoration: none;"><i class="ri-arrow-right-s-line me-1"></i> Contact</a></li>
+                        <li><a href="{% url 'student:student_dashboard' %}" class="text-white" style="text-decoration: none;"><i class="ri-arrow-right-s-line me-1"></i> Dashboard</a></li>
+                    </ul>
+                </div>
+    
+                <!-- Column 3: Support -->
+                <div class="col-md-3">
+                    <h3 class="h5 mb-3" style="color: #FFA500;">Support</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white" style="text-decoration: none;"><i class="ri-arrow-right-s-line me-1"></i> Help Center</a></li>
+                        <li class="mb-2"><a href="#" class="text-white" style="text-decoration: none;"><i class="ri-arrow-right-s-line me-1"></i> Documentation</a></li>
+                        <li class="mb-2"><a href="#" class="text-white" style="text-decoration: none;"><i class="ri-arrow-right-s-line me-1"></i> Privacy Policy</a></li>
+                        <li><a href="#" class="text-white" style="text-decoration: none;"><i class="ri-arrow-right-s-line me-1"></i> Terms of Service</a></li>
+                    </ul>
+                </div>
+    
+                <!-- Column 4: Contact -->
+                <div class="col-md-3">
+                    <h3 class="h5 mb-3" style="color: #FFA500;">Contact Us</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white" style="text-decoration: none;"><i class="ri-map-pin-line me-1"></i> 123 University Ave</a></li>
+                        <li class="mb-2"><a href="mailto:info@projectxpert.edu" class="text-white" style="text-decoration: none;"><i class="ri-mail-line me-1"></i> info@projectxpert.edu</a></li>
+                        <li><a href="tel:+11234567890" class="text-white" style="text-decoration: none;"><i class="ri-phone-line me-1"></i> +1 (123) 456-7890</a></li>
+                    </ul>
+                </div>
+            </div>
+    
+            <!-- Second Row with Copyright -->
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0 text-light" style="text-decoration: none;">&copy; 2025 ProjectXpert. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

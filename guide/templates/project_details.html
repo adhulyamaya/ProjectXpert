@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-section">
+    <div class="dashboard-card">
+        <h4 class="card-title"><i class="ri-file-code-line"></i> Students in Selected Course</h4>
+        <p>Review project details and update statuses.</p>
+
+        <table class="table-auto w-full border mt-4 text-left text-sm">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-2 border">Name</th>
+                    <th class="px-4 py-2 border">Email</th>
+                    <th class="px-4 py-2 border">Group</th>
+                    <th class="px-4 py-2 border">Abstract Title</th>
+                    <th class="px-4 py-2 border">Project Status</th>
+                    <th class="px-4 py-2 border">Change Status</th>
+                    <th class="px-4 py-2 border">Remarks</th>
+                    <th class="px-4 py-2 border">Submit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td class="px-4 py-2 border">{{ student.name }}</td>
+                    <td class="px-4 py-2 border">{{ student.email }}</td>
+                    <td class="px-4 py-2 border">{{ student.student_group }}</td>
+                    <td class="px-4 py-2 border">{{ student.abstract_title }}</td>
+                    <td class="px-4 py-2 border">{{ student.project_status }}</td>
+
+                    <form method="POST" action="{% url 'update_project_review' %}">
+                        {% csrf_token %}
+                        <td class="px-4 py-2 border">
+                            <select name="new_status" class="border p-1 rounded">
+                                <option value="ACCEPTED">Accept</option>
+                                <option value="REJECTED">Reject</option>
+                                <option value="HOLD">Hold</option>
+                            </select>
+                        </td>
+                        <td class="px-4 py-2 border">
+                            <input type="text" name="remarks" placeholder="Remarks" class="border p-1 rounded w-full">
+                        </td>
+                        <td class="px-4 py-2 border">
+                            <input type="hidden" name="email" value="{{ student.email }}">
+                            <input type="hidden" name="course_id" value="{{ course_id }}">
+                            <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Submit</button>
+                        </td>
+                    </form>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-4 text-gray-500">No students found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

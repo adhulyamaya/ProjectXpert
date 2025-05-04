@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+
+
+    <h3>Type your message here . . .</h3>
+    <div class="card mt-3">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="topic" class="form-label">Topic</label>
+                    <input type="text" name="topic" id="topic" class="form-control" placeholder="Enter topic..." required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="guide_message" class="form-label">Message</label>
+                    <textarea name="guide_message" id="guide_message" rows="5" class="form-control" placeholder="Enter your message...">{{ abstract.guide_message }}</textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-success">Send </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="dashboard-card">
+        <h4 class="card-title"><i class="ri-file-list-3-line"></i> Submitted Abstracts</h4>
+
+        {% if abstract_list %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Abstract Title</th>
+                        <th>File Name</th>
+                        <th>Status</th>
+                        <th>Uploaded by</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for abstract in abstract_list %}
+                    <tr>
+                        
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ abstract.abstract_title }}</td>
+                        <td>{{ abstract.abstract_file_name }}</td>
+                        
+                        <td>
+                            {% if abstract.abstract_status == "APPROVED" %}
+                                <span class="badge bg-success">Approved</span>
+                            {% elif abstract.abstract_status == "REJECTED" %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% endif %}
+                        </td>
+                        
+                        <td>{{ abstract.uploader_name }}</td>
+
+                        <td>
+                            <a href="/media/{{ abstract.abstract_file_name }}"
+                                class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="ri-download-line"></i> View</a>
+                        </td>
+                        
+
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-white">No abstract submissions found.</p>
+        {% endif %}
+    </div>
+    <a href="{% url 'student:student_dashboard' %}" class="back-btn" style="background: #444; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; margin-bottom: 40px;">Back to Dashboard</a>
+</div>
+{% endblock %}
