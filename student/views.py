@@ -348,35 +348,128 @@ def group_members(request):
 
     return render(request, 'studentdashboard.html', context)
 
+from django.db.models import F, Sum, Count, FloatField, ExpressionWrapper
 
+# from django.shortcuts import render, get_object_or_404
+# from .models import Users, Student_Groups, Abstract, Project_Reviews
+# from django.db.models import ExpressionWrapper, F, FloatField
 
 def projects_students(request):
+    # Get the user_id from session
     user_id = request.session.get('user_id')
+    print("User ID from session:", user_id)
 
+    # Check if user_id exists in session
     if not user_id:
+        print("No user ID found in session.")
         return render(request, 'studentdashboard.html', {'error': 'User not logged in'})
+
+    # Retrieve the logged-in user from Users model
     user = get_object_or_404(Users, id=user_id)
+    print("Logged-in user:", user)
+
+    # Retrieve the student group associated with the user
     student_group = Student_Groups.objects.filter(user_id=user).first()
+    print("Student group found:", student_group)
+    print("Student group ID:", student_group.id if student_group else None)
+
+    # If no student group exists, return an empty group response
     if not student_group:
+        print("No student group associated with user.")
         return render(request, 'project_student.html', {
             'student_group': None,
             'group_members': [],
             'abstract': None,
             'project_reviews': []
         })
+
+    # Retrieve all users in the same student group
     group_users = Student_Groups.objects.filter(student_group_no=student_group.student_group_no)
+    print("Group users found:", group_users)
     group_members = [group.user_id for group in group_users]
+    print("Group members:", group_members)
+
+    # Retrieve the abstract associated with the student group
     abstract = Abstract.objects.filter(group_id=student_group).first()
+    print("Abstract retrieved:", abstract)
+
+    # Initialize variables for reviews, percentage, and rank
     project_reviews = []
+    abstract_percentage = None
+    rank = None
+
     if abstract:
+        # Get project reviews associated with the abstract
         project_reviews = Project_Reviews.objects.filter(abstract_id=abstract)
+        print("Project reviews found:", list(project_reviews))
+
+        # Calculate percentage if total score exists
+        if abstract.total_score is not None:
+            abstract_percentage = (abstract.total_score / 60) * 100
+            print("Abstract total score:", abstract.total_score)
+            print("Calculated percentage:", abstract_percentage)
+        else:
+            print("Total score is None.")
+
+        # Retrieve all abstracts with total scores and calculate percentages for ranking
+        abstracts_with_scores = Abstract.objects.filter(total_score__isnull=False).annotate(
+            percentage=ExpressionWrapper(F('total_score') * 100.0 / 60, output_field=FloatField())
+        ).order_by('-percentage')
+
+        print("All abstracts with scores (for ranking):")
+        for a in abstracts_with_scores:
+            print(f"ID: {a.id}, Total: {a.total_score}, Percentage: {a.percentage}")
+
+        # Determine the rank of the current abstract
+        for index, item in enumerate(abstracts_with_scores, start=1):
+            if item.id == abstract.id:
+                rank = index
+                print("Rank of current abstract:", rank)
+                break
+    else:
+        print("No abstract submitted.")
+
+    # Prepare context to send to the template
     context = {
         'student_group': student_group,
         'group_members': group_members,
         'abstract': abstract,
+        'abstract_percentage': round(abstract_percentage, 2) if abstract_percentage else None,
+        'rank': rank,
         'project_reviews': project_reviews,
     }
+
+    print("Context passed to template:", context)
     return render(request, 'project_student.html', context)
+
+# def projects_students(request):
+#     user_id = request.session.get('user_id')
+
+#     if not user_id:
+#         return render(request, 'studentdashboard.html', {'error': 'User not logged in'})
+#     user = get_object_or_404(Users, id=user_id)
+#     student_group = Student_Groups.objects.filter(user_id=user).first()
+#     if not student_group:
+#         return render(request, 'project_student.html', {
+#             'student_group': None,
+#             'group_members': [],
+#             'abstract': None,
+#             'project_reviews': []
+#         })
+#     group_users = Student_Groups.objects.filter(student_group_no=student_group.student_group_no)
+#     group_members = [group.user_id for group in group_users]
+#     abstract = Abstract.objects.filter(group_id=student_group,).first()
+#     project_reviews = []
+#     if abstract:
+#         project_reviews = Project_Reviews.objects.filter(abstract_id=abstract)
+
+#     context = {
+#         'student_group': student_group,
+#         'group_members': group_members,
+#         'abstract': abstract,
+#         'project_reviews': project_reviews,
+#     }
+#     return render(request, 'project_student.html', context)
 
 def project_members(request):
     user_id = request.session.get('user_id')
@@ -421,7 +514,8 @@ import re
 
 
 file_path = "path/to/student_abstract.pdf"
-api_key = "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"
+# api_key = "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"
+api_key ="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"
 
 
 def project_abstract_pdf(file_path: str) -> str: 
@@ -528,6 +622,111 @@ Abstract:
             abstract=abstract_text
         )
 
+# def submit_project(request):
+#     if request.method == 'POST':
+#         user_id = request.session.get('user_id')
+#         print(f"[DEBUG] user_id from session: {user_id}")
+
+#         if not user_id:
+#             print("[ERROR] User not logged in.")
+#             return render(request, 'studentdashboard.html', {'error': 'User not logged in'})
+
+#         user = get_object_or_404(Users, id=user_id)
+#         print(f"[DEBUG] User fetched: {user}")
+
+#         student_group = get_object_or_404(Student_Groups, user_id=user.id)
+#         print(f"[DEBUG] Student group fetched: {student_group}")
+
+#         project_title = request.POST.get('project_title')
+#         project_abstract = request.FILES.get('project_file')
+
+#         print(f"[DEBUG] Received project title: {project_title}")
+#         print(f"[DEBUG] Received project abstract file: {project_abstract.name if project_abstract else 'None'}")
+
+#         try:
+#             if not project_abstract:
+#                 print("[ERROR] No abstract file uploaded.")
+#                 messages.error(request, 'No abstract file uploaded.')
+#                 return redirect('student:student_dashboard')
+#             upload_dir = os.path.join(settings.MEDIA_ROOT, 'abstracts')
+#             os.makedirs(upload_dir, exist_ok=True)
+#             saved_file_path = os.path.join(upload_dir, project_abstract.name)
+
+#             print(f"[DEBUG] Saving uploaded file to: {saved_file_path}")
+#             with open(saved_file_path, 'wb+') as destination:
+#                 for chunk in project_abstract.chunks():
+#                     destination.write(chunk)
+#             print("[DEBUG] File saved successfully.")
+#             # Step 1: Parse the abstract text
+#             print("[DEBUG] Parsing PDF...")
+#             parsed_text = project_abstract_pdf(saved_file_path)
+#             print(f"[DEBUG] Parsed text length: {len(parsed_text)}")
+#             print(parsed_text,".........................")
+
+#             # Step 2: Evaluate via Groq
+#             print("[DEBUG] Sending parsed text to Groq API for evaluation...")
+#             evaluation = evaluate_project_abstract(parsed_text, api_key=api_key)
+#             print(f"[DEBUG] Evaluation result: {evaluation}")
+            
+#             # Step 3: Store everything in DB
+#             print("Originality:", evaluation.originality)
+#             print("Clarity:", evaluation.clarity)
+#             print("Feasibility:", evaluation.feasibility)
+#             print("Relevance:", evaluation.relevance)
+#             print("Methodology:", evaluation.methodology)
+#             print("Presentation:", evaluation.presentation)
+#             print("Total Score:", evaluation.total_score)
+#             print("Justification:", evaluation.justification)
+
+#              # Step 4: Rank Calculation
+#             # Retrieve all abstracts with a score and order by total score to calculate rank
+#             all_abstracts = Abstract.objects.filter(total_score__isnull=False).order_by('-total_score')
+
+#             # Determine the rank of the current abstract
+#             rank = None
+#             for index, abstract in enumerate(all_abstracts, start=1):
+#                 if abstract.id == project.id:
+#                     rank = index
+#                     print(f"[DEBUG] Rank for abstract '{project.abstract_title}': {rank}")
+#                     break
+
+#             # # Update the abstract with the calculated rank
+#             # project.rank = rank
+#             # project.save()
+
+#             # print("[DEBUG] Rank updated in DB.")
+
+
+
+            
+#             project = Abstract.objects.create(
+#                 group_id=student_group,
+#                 abstract_title=project_title,
+#                 abstract_file_name=project_abstract.name,  
+#                 originality=evaluation.originality,
+#                 clarity=evaluation.clarity,
+#                 feasibility=evaluation.feasibility,
+#                 relevance=evaluation.relevance,
+#                 methodology=evaluation.methodology,
+#                 presentation=evaluation.presentation,
+#                 total_score=evaluation.total_score,
+#                 justification=evaluation.justification,
+#                 rank=rank,  # Set the rank here
+#             )
+
+
+#             print("[DEBUG] Abstract saved successfully to DB.")
+
+#             messages.success(request, 'Project submitted and evaluated successfully!')
+#             return redirect('student:student_dashboard')
+
+#         except Exception as e:
+#             print(f"[EXCEPTION] Error during project submission: {e}")
+#             messages.error(request, f'Error submitting project: {str(e)}')
+
+#     return render(request, 'abstract_list.html')
+
+
 def submit_project(request):
     if request.method == 'POST':
         user_id = request.session.get('user_id')
@@ -554,6 +753,7 @@ def submit_project(request):
                 print("[ERROR] No abstract file uploaded.")
                 messages.error(request, 'No abstract file uploaded.')
                 return redirect('student:student_dashboard')
+            
             upload_dir = os.path.join(settings.MEDIA_ROOT, 'abstracts')
             os.makedirs(upload_dir, exist_ok=True)
             saved_file_path = os.path.join(upload_dir, project_abstract.name)
@@ -563,11 +763,12 @@ def submit_project(request):
                 for chunk in project_abstract.chunks():
                     destination.write(chunk)
             print("[DEBUG] File saved successfully.")
+            
             # Step 1: Parse the abstract text
             print("[DEBUG] Parsing PDF...")
             parsed_text = project_abstract_pdf(saved_file_path)
             print(f"[DEBUG] Parsed text length: {len(parsed_text)}")
-            print(parsed_text,".........................")
+            print(parsed_text, ".........................")
 
             # Step 2: Evaluate via Groq
             print("[DEBUG] Sending parsed text to Groq API for evaluation...")
@@ -575,20 +776,31 @@ def submit_project(request):
             print(f"[DEBUG] Evaluation result: {evaluation}")
             
             # Step 3: Store everything in DB
-            print("Originality:", evaluation.originality)
-            print("Clarity:", evaluation.clarity)
-            print("Feasibility:", evaluation.feasibility)
-            print("Relevance:", evaluation.relevance)
-            print("Methodology:", evaluation.methodology)
-            print("Presentation:", evaluation.presentation)
-            print("Total Score:", evaluation.total_score)
-            print("Justification:", evaluation.justification)
+            print(f"Originality: {evaluation.originality}")
+            print(f"Clarity: {evaluation.clarity}")
+            print(f"Feasibility: {evaluation.feasibility}")
+            print(f"Relevance: {evaluation.relevance}")
+            print(f"Methodology: {evaluation.methodology}")
+            print(f"Presentation: {evaluation.presentation}")
+            print(f"Total Score: {evaluation.total_score}")
+            print(f"Justification: {evaluation.justification}")
 
-            
+            # Step 4: Rank Calculation
+            all_abstracts = Abstract.objects.filter(total_score__isnull=False).order_by('-total_score')
+
+            # Determine the rank of the current abstract
+            rank = None
+            for index, abstract in enumerate(all_abstracts, start=1):
+                if abstract.abstract_title == project_title:  # Use a matching attribute to find the project
+                    rank = index
+                    print(f"[DEBUG] Rank for abstract '{project_title}': {rank}")
+                    break
+
+            # Create the project entry in the DB
             project = Abstract.objects.create(
                 group_id=student_group,
                 abstract_title=project_title,
-                abstract_file_name=project_abstract.name,  
+                abstract_file_name=project_abstract.name,
                 originality=evaluation.originality,
                 clarity=evaluation.clarity,
                 feasibility=evaluation.feasibility,
@@ -597,7 +809,19 @@ def submit_project(request):
                 presentation=evaluation.presentation,
                 total_score=evaluation.total_score,
                 justification=evaluation.justification,
+                rank=rank,  # Rank based on total score
             )
+
+            # Now fetch all abstracts ordered by score
+            all_abstracts = Abstract.objects.filter(total_score__isnull=False).order_by('-total_score')
+
+            # Calculate rank
+            for index, abstract in enumerate(all_abstracts, start=1):
+                if abstract.id == project.id:
+                    project.rank = index
+                    project.save()
+                    print(f"[DEBUG] Rank for abstract '{project_title}': {index}")
+                    break
 
             print("[DEBUG] Abstract saved successfully to DB.")
 

@@ -4,6 +4,8 @@
 {% block content %}
 <div class="container mt-4">
     <h3>Inbox</h3>
+
+    <!-- Display messages -->
     <div class="card mt-3">
         <div class="card-body">
             {% if messages %}
@@ -11,13 +13,46 @@
                     {% for message in messages %}
                         <li class="list-group-item">
                             <strong>Topic:</strong> {{ message.topic }} <br>
-                            <strong>Message:</strong> {{ message.message }}
+                            <strong>Message:</strong> {{ message.message }} <br>
+                            {% if message.reply %}
+                                <strong>Reply:</strong> {{ message.reply }}
+                            {% else %}
+                                <!-- Reply form -->
+                                <form method="post" class="mt-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="reply_index" value="{{ forloop.counter0 }}">
+                                    <div class="input-group">
+                                        <input type="text" name="reply_text" class="form-control" placeholder="Write a reply...">
+                                        <button type="submit" name="action" value="reply" class="btn btn-primary">Send Reply</button>
+                                    </div>
+                                </form>
+                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
                 <p>No messages found.</p>
             {% endif %}
+        </div>
+    </div>
+
+    <!-- Send a new message -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5>Send a New Message</h5>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="send">
+                <div class="mb-3">
+                    <label for="topic" class="form-label">Topic</label>
+                    <input type="text" name="topic" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea name="message" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Send Message</button>
+            </form>
         </div>
     </div>
 </div>

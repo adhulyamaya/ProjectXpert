@@ -19,7 +19,8 @@
                 <div class="card-body bg-warning">
                     <h5 class="card-title">{{ guide.name }}</h5>
                     <p class="card-text">Email: {{ guide.email }}</p>
-                    <a href="{% url 'hod:view_projects' guide.id %}" class="btn btn-dark">View Projects</a>
+                    <p class="card-text">Contact Number: {{ guide.contact_number }}</p>
+                    <a href="{% url 'hod:view_projects' %}" class="btn btn-dark">View Projects</a>
                     
                 </div>
             </div>

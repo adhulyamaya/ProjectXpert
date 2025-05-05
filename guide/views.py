@@ -133,43 +133,93 @@ def submit_topic(request):
 
     return render(request, 'announcement.html')
 
-
-
 def project_ranking(request):
+    print("Entering project_ranking view")  # Print when the function is entered
+
     user_id = request.session.get('user_id')
+    print(f"User ID from session: {user_id}")  # Print the user_id retrieved from session
 
     if not user_id:
+        print("User ID not found in session")  # Print if user ID is missing
         return render(request, 'error.html', {'message': 'User not found in session.'})
 
     try:
         guide = Users.objects.select_related('course_id', 'department_id').get(id=user_id)
+        print(f"Guide found: {guide}")  # Print the guide object if found
     except Users.DoesNotExist:
+        print("Guide not found")  # Print if the guide doesn't exist
         return render(request, 'error.html', {'message': 'Guide not found.'})
 
     course = guide.course_id
     department = guide.department_id
+    print(f"Course: {course}, Department: {department}")  # Print the guide's course and department
 
     # Fetch all students in the same course
     students = Users.objects.filter(course_id=course, user_role_choice='student')
-
+    print(f"Students found: {students}")  # Print the students queryset
+    print(f"Found {students.count()} students in the course")  # Print the number of students found
+    
     # Fetch all student groups associated with these students
     student_groups = Student_Groups.objects.filter(user_id__in=students)
+    print(f"Found {student_groups.count()} student groups")  # Print the number of student groups found
 
     # Fetch all abstracts from these student groups
     abstracts = Abstract.objects.filter(group_id__in=student_groups).select_related('group_id')
+    print(f"Found {abstracts.count()} abstracts")  # Print the number of abstracts found
 
     # Pre-fetch related project reviews in a dictionary grouped by abstract ID
     reviews_qs = Project_Reviews.objects.filter(abstract_id__in=abstracts)
+    print(f"Found {reviews_qs.count()} project reviews")  # Print the number of reviews found
+
     project_reviews = {}
     for review in reviews_qs:
         project_reviews.setdefault(review.abstract_id_id, []).append(review)
+    print(f"Project reviews grouped by abstract: {project_reviews}")  # Print the grouped reviews dictionary
 
     context = {
         'abstracts': abstracts,
         'project_reviews': project_reviews,
     }
 
+    print("Rendering project_ranking.html with context")  # Print when rendering the page
     return render(request, 'project_ranking.html', context)
+
+
+# def project_ranking(request):
+#     user_id = request.session.get('user_id')
+
+#     if not user_id:
+#         return render(request, 'error.html', {'message': 'User not found in session.'})
+
+#     try:
+#         guide = Users.objects.select_related('course_id', 'department_id').get(id=user_id)
+#     except Users.DoesNotExist:
+#         return render(request, 'error.html', {'message': 'Guide not found.'})
+
+#     course = guide.course_id
+#     department = guide.department_id
+
+#     # Fetch all students in the same course
+#     students = Users.objects.filter(course_id=course, user_role_choice='student')
+
+#     # Fetch all student groups associated with these students
+#     student_groups = Student_Groups.objects.filter(user_id__in=students)
+
+#     # Fetch all abstracts from these student groups
+#     abstracts = Abstract.objects.filter(group_id__in=student_groups).select_related('group_id')
+
+#     # Pre-fetch related project reviews in a dictionary grouped by abstract ID
+#     reviews_qs = Project_Reviews.objects.filter(abstract_id__in=abstracts)
+#     project_reviews = {}
+#     for review in reviews_qs:
+#         project_reviews.setdefault(review.abstract_id_id, []).append(review)
+
+#     context = {
+#         'abstracts': abstracts,
+#         'project_reviews': project_reviews,
+#     }
+
+#     return render(request, 'project_ranking.html', context)
 
 
 

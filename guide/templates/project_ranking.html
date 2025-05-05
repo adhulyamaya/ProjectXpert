@@ -101,6 +101,18 @@
                         <p><i class="ri-bar-chart-2-line icon"></i><strong>Rank:</strong> {{ abstract.rank }}</p>
                         <p><i class="ri-calendar-line icon"></i><strong>Submitted On:</strong> {{ abstract.created_at|date:"F d, Y" }}</p>
 
+                        <hr class="my-3">
+
+                        <h5 class="text-info"><i class="ri-bar-chart-grouped-line icon"></i> Project Evaluation Scores</h5>
+                        <p><strong>Originality:</strong> {{ abstract.originality }}</p>
+                        <p><strong>Clarity:</strong> {{ abstract.clarity }}</p>
+                        <p><strong>Feasibility:</strong> {{ abstract.feasibility }}</p>
+                        <p><strong>Relevance:</strong> {{ abstract.relevance }}</p>
+                        <p><strong>Methodology:</strong> {{ abstract.methodology }}</p>
+                        <p><strong>Presentation:</strong> {{ abstract.presentation }}</p>
+                        <p><strong>Total Score:</strong> {{ abstract.total_score }}</p>
+                        <p><i class="ri-chat-1-line icon"></i><strong>Justification:</strong> {{ abstract.justification }}</p>
+
                         {% for review in project_reviews %}
                             {% if review.abstract_id == abstract %}
                                 <div class="mt-3 p-3 bg-light rounded text-dark">

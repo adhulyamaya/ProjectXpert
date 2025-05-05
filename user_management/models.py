@@ -2,11 +2,8 @@ from django.db import models
 from college_info.models import Department,Course
 
 class Users(models.Model):
-    USER_ROLE_CHOICES = (
-    ('student', 'Student'),
-    ('teacher', 'Teacher'),
-    )
-    user_role_choice = models.CharField(max_length=20, choices=USER_ROLE_CHOICES, null=True, blank=True)
+    
+    user_role_choice = models.CharField(max_length=20, null=True, blank=True)
     name = models.CharField(max_length=100,null=True,blank=True)
     email = models.CharField(max_length=50,null=True,blank=True)
     password = models.CharField(max_length=10,null=True,blank=True)

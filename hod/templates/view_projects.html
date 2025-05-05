@@ -2,57 +2,113 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4">
+<style>
+    :root {
+        --surface-a10: #1e1e1e;
+        --surface-a20: #2d2d2d;
+        --primary-a30: #ffbb33;
+        --primary-a50: #ffcc66;
+        --text-primary: rgba(255, 255, 255, 0.9);
+        --text-secondary: rgba(255, 255, 255, 0.7);
+        --border-radius: 8px;
+    }
 
-    <div class="d-flex justify-content-start">
-        <a href="{% url 'hod:head_dashboard' %}" class="btn btn-warning mb-3">
-            ← Head Dashboard
-        </a>
-    </div>
+    body {
+        background-color: var(--surface-a10);
+        color: var(--text-primary);
+        font-family: 'Segoe UI', sans-serif;
+        padding: 20px;
+    }
 
-    <h3>Students under Guide: {{ guide.name }}</h3>
+    .card {
+        background-color: var(--surface-a20);
+        border-radius: var(--border-radius);
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+        transition: transform 0.2s ease-in-out;
+    }
 
-    {% if data %}
-    <div class="table-responsive mt-4">
-        <table class="table table-bordered table-dark text-light">
-            <thead class="bg-warning text-black">
-                <tr>
-                    <th>Group No</th>
-                    <th>Abstract Title</th>
-                    <th>Status</th>
-                    
-                    <th>Abstract File</th>
-                    <th>Send Message</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for entry in data %}
-                <tr>
-                    <td>{{ entry.group_no }}</td>
-                    <td>{{ entry.abstract_title }}</td>
-                    <td>{{ entry.abstract_status }}</td>
-                    
-                    <td>
-                        {% if entry.abstract_path %}
-                        
-                        <a href="/media/{{ entry.abstract_path }}" target="_blank" class="btn btn-sm btn-info">View</a>
-                        
+    .card:hover {
+        transform: scale(1.01);
+        box-shadow: 0 0 15px var(--primary-a50);
+    }
 
+    .card h2 {
+        color: var(--primary-a30);
+        margin-bottom: 10px;
+    }
 
-                        {% else %}
-                        <span class="text-light">No File</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{% url 'user_management:send_message' guide.id %}" class="btn btn-sm btn-primary">Send</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="alert alert-info mt-4">No projects found under this guide.</div>
-    {% endif %}
-</div>
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .field {
+        flex: 1 1 200px;
+        color: var(--text-secondary);
+    }
+
+    hr {
+        border: 0;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 15px 0;
+    }
+
+    .no-data {
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 1.2em;
+    }
+
+    h1 {
+        text-align: center;
+        color: var(--primary-a50);
+        margin-bottom: 30px;
+    }
+</style>
+
+<h1>All Project Abstracts</h1>
+
+{% if abstracts %}
+    {% for abstract in abstracts %}
+        <div class="card">
+            <h2>{{ abstract.abstract_title }}</h2>
+            <div class="row">
+                <div class="field"><strong>Group No:</strong> {{ abstract.group_id.student_group_no }}</div>
+                <div class="field"><strong>Project Type:</strong> {{ abstract.project_type }}</div>
+                <div class="field"><strong>Status:</strong> {{ abstract.abstract_status }}</div>
+                <div class="field"><strong>Rank:</strong> {{ abstract.rank }}</div>
+                <div class="field"><strong>Created At:</strong> {{ abstract.created_at }}</div>
+                <div class="field"><strong>Updated At:</strong> {{ abstract.updated_at }}</div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="field"><strong>Guide Message:</strong> {{ abstract.guide_message }}</div>
+                <div class="field"><strong>HOD to Guide:</strong> {{ abstract.hod_messageto_guide }}</div>
+                <div class="field"><strong>Guide to HOD:</strong> {{ abstract.guide_messageto_hod }}</div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="field"><strong>Originality:</strong> {{ abstract.originality }}</div>
+                <div class="field"><strong>Clarity:</strong> {{ abstract.clarity }}</div>
+                <div class="field"><strong>Feasibility:</strong> {{ abstract.feasibility }}</div>
+                <div class="field"><strong>Relevance:</strong> {{ abstract.relevance }}</div>
+                <div class="field"><strong>Methodology:</strong> {{ abstract.methodology }}</div>
+                <div class="field"><strong>Presentation:</strong> {{ abstract.presentation }}</div>
+                <div class="field"><strong>Justification:</strong> {{ abstract.justification }}</div>
+                <div class="field"><strong>Total Score:</strong> {{ abstract.total_score }}</div>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="no-data">No abstracts found.</p>
+{% endif %}
 {% endblock %}

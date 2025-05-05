@@ -102,17 +102,9 @@ def manage_project(request):
     user = get_object_or_404(Users, id=user_id)
 
     # Filter all users with role 'GUIDE' in the same department
-    guide_users = Users.objects.filter(user_role_choice='GUIDE', department_id=user.department_id)
+    guide_users = Users.objects.filter(user_role_choice='Teacher', department_id=user.department_id)
     print(user)
     print(guide_users)
-
-    guide_users = [
-    {'id': 1, 'name': 'Dr. Asha Menon', 'email': 'asha@example.com'},
-    {'id': 2, 'name': 'Prof. Rahul Nair', 'email': 'rahul@example.com'},
-    {'id': 3, 'name': 'Ms. Sneha Thomas', 'email': 'sneha@example.com'},
-]
-
-
     context = {
         'user': user,
         'guide_users': guide_users
@@ -123,44 +115,113 @@ def manage_project(request):
 
 
 
-def view_projects(request, id):
-    user_id = request.session.get('user_id')
-    if not user_id:
-        return redirect('user_management:login')
+# def view_projects(request, id):
+#     user_id = request.session.get('user_id')
+#     print('user_id', user_id)   
+#     if not user_id:
+#         return redirect('user_management:login')
 
-    user = get_object_or_404(Users, id=user_id)
+#     user = get_object_or_404(Users, id=user_id)
     
-    guide = get_object_or_404(Users, id=id)  # Get guide using parameter
-    student_groups = Student_Groups.objects.filter(user_id=guide)
+#     guide = get_object_or_404(Users, id=id)  
 
+#     department =
+
+#     student_groups = Student_Groups.objects.filter(user_id=guide)
+#     print('student_groups', student_groups)
+
+#     data = []
+
+
+#     for group in student_groups:
+#         abstracts = Abstract.objects.filter(group_id=group)
+#         for abstract in abstracts:
+#             reviews = Project_Reviews.objects.filter(abstract_id=abstract)
+            
+#             # Strip path and get the file name
+#             abstract_file_name = os.path.basename(abstract.abstract_file_name)
+            
+            
+#             print(abstract_file_name)
+            
+#             data.append({
+#                 'group_no': group.student_group_no,
+#                 'abstract_title': abstract.abstract_title,
+#                 'abstract_status': abstract.abstract_status,
+#                 'guide_message': abstract.guide_message,
+#                 'abstract_path': abstract_file_name  # Use the file name without path
+#             })
+            
+#             # Debugging: Print the file name
+#             print(abstract_file_name)
+
+#     return render(request, 'view_projects.html', {
+#         'data': data,
+#         'guide': guide
+#     })
+
+
+
+# def view_projects(request):
+#     # 1. Get the HOD user
+#     user_id = request.session.get('user_id')
+    
+#     hod_user = get_object_or_404(Users, id=user_id)
+#     id = hod_user.id
+#     print('hod_user', hod_user)
+    
+    
+#     # 2. Get department and course
+#     department = hod_user.department_id
+#     course = hod_user.course_id
+
+#     # 3. Get all students in the same department and course
+#     students = Users.objects.filter(
+#         department_id=department,
+#         course_id=course,
+#         user_role_choice='Student'
+#     )
+
+#     # 4. Get student groups where these students belong
+#     student_groups = Student_Groups.objects.filter(user_id__in=students)
+
+#     data = []
+
+#     for group in student_groups:
+#         # 5. Get abstracts linked to this group
+#         abstracts = Abstract.objects.filter(group_id=group)
+
+#         for abstract in abstracts:
+#             student = group.user_id
+#             guide = Users.objects.filter(
+#                 department_id=department,
+#                 course_id=course,
+#                 user_role_choice='Guide'
+#             ).first()  # Adjust if specific guide-to-student mapping exists
+
+#             abstract_file_name = os.path.basename(abstract.abstract_file_name or '')
+
+#             data.append({
+#                 'group_no': group.student_group_no,
+#                 'abstract_title': abstract.abstract_title,
+#                 'abstract_status': abstract.abstract_status,
+#                 'guide_message': abstract.guide_message,
+#                 'abstract_path': abstract_file_name,
+#                 'student_name': student.name,
+#                 'guide_name': guide.name if guide else "N/A",
+#                 'guide_email': guide.email if guide else "N/A",
+#             })
+
+#     return render(request, 'view_projects.html', {
+#         'data': data,
+#         'hod': hod_user
+#     })
+
+
+
+def view_projects(request):
+    abstracts = Abstract.objects.all()
     data = []
 
-
-    for group in student_groups:
-        abstracts = Abstract.objects.filter(group_id=group)
-        for abstract in abstracts:
-            reviews = Project_Reviews.objects.filter(abstract_id=abstract)
-            
-            # Strip path and get the file name
-            abstract_file_name = os.path.basename(abstract.abstract_file_name)
-            
-            
-            print(abstract_file_name)
-            
-            data.append({
-                'group_no': group.student_group_no,
-                'abstract_title': abstract.abstract_title,
-                'abstract_status': abstract.abstract_status,
-                'guide_message': abstract.guide_message,
-                'abstract_path': abstract_file_name  # Use the file name without path
-            })
-            
-            # Debugging: Print the file name
-            print(abstract_file_name)
-
-    return render(request, 'view_projects.html', {
-        'data': data,
-        'guide': guide
-    })
-
-
+   
+    return render(request, 'view_projects.html', {'abstracts': abstracts})

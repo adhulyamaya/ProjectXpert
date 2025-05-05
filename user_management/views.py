@@ -183,24 +183,57 @@ def logout_view(request):
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Users
 import json
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages as django_messages
+from .models import Users
+import json
 
 def inbox(request):
-    # Step 1: Get the user_id from the session
     user_id = request.session.get('user_id')
-    
-    # If user_id is not in the session, redirect to login page
     if not user_id:
         return redirect('user_management:login')
 
-    # Step 2: Fetch the user object
     user = get_object_or_404(Users, id=user_id)
-    
-    # Step 3: Load the message field (which is a JSON string)
-    if user.message:
-        # Load the existing messages from JSON format
-        messages = json.loads(user.message)
-    else:
-        messages = []
 
-    # Step 4: Render the inbox page with the user's messages
-    return render(request, 'inbox.html', {'user': user, 'messages': messages})
+    # Load messages or initialize empty list
+    if user.message:
+        messages_list = json.loads(user.message)
+    else:
+        messages_list = []
+
+    if request.method == "POST":
+        action = request.POST.get('action')
+
+        if action == "send":
+            # Handle sending a new message
+            topic = request.POST.get('topic')
+            message_text = request.POST.get('message')
+
+            new_message = {
+                'topic': topic,
+                'message': message_text,
+                'reply': None
+            }
+
+            messages_list.append(new_message)
+            user.message = json.dumps(messages_list)
+            user.save()
+            django_messages.success(request, "Message sent successfully!")
+            return redirect('user_management:inbox')
+
+        elif action == "reply":
+            # Handle replying to a message
+            reply_index = int(request.POST.get('reply_index'))
+            reply_text = request.POST.get('reply_text')
+
+            if 0 <= reply_index < len(messages_list):
+                messages_list[reply_index]['reply'] = reply_text
+                user.message = json.dumps(messages_list)
+                user.save()
+                django_messages.success(request, "Reply sent successfully!")
+            else:
+                django_messages.error(request, "Invalid message index.")
+            return redirect('user_management:inbox')
+
+    return render(request, 'inbox.html', {'user': user, 'messages': messages_list})
+
